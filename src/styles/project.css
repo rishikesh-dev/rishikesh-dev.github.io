@@ -1,3 +1,7 @@
+/* ============================================
+   KEYFRAME ANIMATIONS
+============================================ */
+
 @keyframes fadeSlideUp {
     from {
         opacity: 0;
@@ -140,6 +144,10 @@
     }
 }
 
+/* ============================================
+   SHEET OVERLAY
+============================================ */
+
 #sheetOverlay {
     position: fixed;
     inset: 0;
@@ -157,11 +165,7 @@
 
 #sheetOverlay.active {
     animation: overlayReveal 0.35s ease forwards;
-}
-
-/* Modal overlay entrance */
-.modal-overlay.active {
-    animation: overlayReveal 0.35s ease forwards;
+    pointer-events: all;
 }
 
 #bottomSheet {
@@ -186,17 +190,14 @@
     animation: handleWiggle 0.6s ease 0.4s;
 }
 
-/* Sheet tag fades in first */
 #sheetOverlay.active .sheet-tag {
     animation: fadeSlideUp 0.4s ease 0.15s both;
 }
 
-/* Sheet title follows */
 #sheetOverlay.active .sheet-title {
     animation: fadeSlideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.25s both;
 }
 
-/* Sheet body last */
 #sheetOverlay.active .sheet-body {
     animation: fadeSlideUp 0.5s ease 0.35s both;
 }
@@ -219,7 +220,7 @@
 
 .sheet-title {
     font-family: var(--font-display);
-    font-size: 48px;
+    font-size: clamp(28px, 6vw, 48px);
     color: var(--text);
     line-height: 1;
     margin-bottom: 28px;
@@ -231,6 +232,10 @@
     line-height: 1.8;
 }
 
+/* ============================================
+   SECTION LABEL
+============================================ */
+
 .section-label {
     font-family: var(--font-mono);
     font-size: 11px;
@@ -241,6 +246,7 @@
     display: flex;
     align-items: center;
     gap: 16px;
+    animation: fadeSlideUp 0.5s ease both;
 }
 
 .section-label span {
@@ -254,19 +260,22 @@
     max-width: 80px;
     height: 1px;
     background: var(--border2);
+    animation: accentLineGrow 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.3s both;
 }
+
+/* ============================================
+   PROJECTS GRID
+============================================ */
 
 .projects-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+    grid-template-columns: repeat(3, 1fr);
     gap: 24px;
 }
 
-.projects-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
-    gap: 24px;
-}
+/* ============================================
+   PROJECT CARD
+============================================ */
 
 .project-card {
     background: rgba(15, 15, 15, 0.8);
@@ -278,11 +287,10 @@
     transition: border-color 0.3s, box-shadow 0.3s, transform 0.3s;
     backdrop-filter: blur(10px);
     overflow: hidden;
+    animation: scaleIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) both,
+        borderPulse 1.2s ease 0.6s 2;
 }
 
-/* DECISION: Glow effect on hover only.
-       Constant glow = visual noise.
-       Hover glow = delightful interaction. */
 .project-card:hover {
     border-color: var(--accent);
     box-shadow: 0 0 40px rgba(200, 255, 0, 0.08),
@@ -290,7 +298,6 @@
     transform: translateY(-4px);
 }
 
-/* Subtle gradient overlay on card */
 .project-card::before {
     content: '';
     position: absolute;
@@ -307,6 +314,31 @@
     opacity: 1;
 }
 
+/* Stagger each card */
+.projects-grid .project-card:nth-child(1) {
+    animation-delay: 0.05s;
+}
+
+.projects-grid .project-card:nth-child(2) {
+    animation-delay: 0.12s;
+}
+
+.projects-grid .project-card:nth-child(3) {
+    animation-delay: 0.19s;
+}
+
+.projects-grid .project-card:nth-child(4) {
+    animation-delay: 0.26s;
+}
+
+.projects-grid .project-card:nth-child(5) {
+    animation-delay: 0.33s;
+}
+
+.projects-grid .project-card:nth-child(6) {
+    animation-delay: 0.40s;
+}
+
 .project-tag {
     font-family: var(--font-mono);
     font-size: 10px;
@@ -318,7 +350,7 @@
 
 .project-name {
     font-family: var(--font-display);
-    font-size: 36px;
+    font-size: clamp(24px, 5vw, 36px);
     color: var(--text);
     line-height: 1;
     margin-bottom: 16px;
@@ -352,6 +384,7 @@
 
 .project-links {
     display: flex;
+    flex-wrap: wrap;
     gap: 20px;
 }
 
@@ -378,11 +411,7 @@
 }
 
 .project-link:hover::after {
-    transform: translateX(4px);
-}
-
-.project-card {
-    cursor: pointer;
+    animation: iconBounce 0.5s ease infinite;
 }
 
 .project-card .view-details {
@@ -408,16 +437,48 @@
     content: '↗';
 }
 
-.modal {
-    background: #0f0f0f;
-    width: 100%;
-    max-width: 860px;
-    max-height: 90vh;
-    padding: 48px;
-
-    transform: translateY(40px);
-    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+/* Hover animations on card children */
+.project-card:hover .project-tag {
+    animation: slideInLeft 0.25s ease both;
 }
+
+.project-card:hover .project-name {
+    transition: letter-spacing 0.3s ease;
+    letter-spacing: 0.04em;
+}
+
+.project-card:hover .tech-pill {
+    animation: pillPop 0.3s ease both;
+}
+
+.project-card:hover .tech-pill:nth-child(1) {
+    animation-delay: 0.00s;
+}
+
+.project-card:hover .tech-pill:nth-child(2) {
+    animation-delay: 0.05s;
+}
+
+.project-card:hover .tech-pill:nth-child(3) {
+    animation-delay: 0.10s;
+}
+
+.project-card:hover .tech-pill:nth-child(4) {
+    animation-delay: 0.15s;
+}
+
+.project-card:hover .tech-pill:nth-child(5) {
+    animation-delay: 0.20s;
+}
+
+.project-card:hover .view-details::after {
+    display: inline-block;
+    animation: iconBounce 0.6s ease infinite;
+}
+
+/* ============================================
+   MODAL OVERLAY
+============================================ */
 
 .modal-overlay {
     position: fixed;
@@ -425,6 +486,7 @@
     z-index: 200;
     background: rgba(0, 0, 0, 0.85);
     backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
     display: flex;
     align-items: flex-end;
     justify-content: center;
@@ -434,103 +496,30 @@
 }
 
 .modal-overlay.active {
-    opacity: 1;
+    animation: overlayReveal 0.35s ease forwards;
     pointer-events: all;
 }
 
+/* ============================================
+   MODAL
+============================================ */
 
+.modal {
+    background: #0f0f0f;
+    width: 100%;
+    max-width: 860px;
+    max-height: 90vh;
+    padding: 48px;
+    position: relative;
+    overflow-y: auto;
+    transform: translateY(40px);
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
 
 .modal-overlay.active .modal {
     transform: translateY(0);
 }
 
-.modal-close {
-    top: 16px;
-    right: 16px;
-    font-size: 10px;
-    padding: 6px 12px;
-}
-
-.modal-title {
-    font-size: clamp(40px, 12vw, 64px);
-}
-
-.modal-grid {
-    grid-template-columns: 1fr;
-    gap: 28px;
-}
-
-
-.modal-actions {
-    display: flex;
-    justify-content: start;
-    /* center horizontally */
-    align-items: center;
-    /* center vertically */
-
-    width: 100%;
-    /* IMPORTANT */
-    margin-top: 20px;
-}
-
-.modal-actions a {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    padding: 12px 24px;
-    background-color: var(--accent);
-    color: black;
-
-    text-align: center;
-}
-
-/* ============================================
-       RESPONSIVE — VERY SMALL (max 380px)
-       DECISION: Covers small Android phones
-       like Moto G series common in India.
-    ============================================ */
-@media (max-width: 380px) {
-    .skills-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .about-stats {
-        gap: 16px;
-    }
-
-    .stat-number {
-        font-size: 36px;
-    }
-}
-
-/* ============================================
-       HORIZONTAL DIVIDER
-    ============================================ */
-.divider {
-    width: 100%;
-    height: 1px;
-    background: var(--border);
-}
-
-/* ============================================
-       PROJECT MODAL
-       DECISION: Fixed overlay with blur backdrop.
-       Keeps user on the same page — no routing needed.
-       Blur on background maintains context so the
-       user never feels lost.
-
-       DECISION: Modal slides up from bottom.
-       More natural on both mobile and desktop than
-       a fade-in-center approach. Feels intentional.
-    ============================================ */
-
-
-
-
-/* DECISION: Scrollbar styling.
-       Dark scrollbar matches the design — browser
-       default scrollbar would look out of place. */
 .modal::-webkit-scrollbar {
     width: 4px;
 }
@@ -555,12 +544,14 @@
     letter-spacing: 0.1em;
     padding: 8px 16px;
     cursor: pointer;
-    transition: border-color 0.2s, color 0.2s;
+    transition: border-color 0.2s, color 0.2s, transform 0.15s ease;
+    z-index: 10;
 }
 
 .modal-close:hover {
     border-color: var(--text-muted);
     color: var(--text);
+    transform: scale(0.96);
 }
 
 .modal-tag {
@@ -574,17 +565,27 @@
 
 .modal-title {
     font-family: var(--font-display);
-    font-size: clamp(48px, 8vw, 88px);
+    font-size: clamp(32px, 8vw, 88px);
     line-height: 0.9;
     color: var(--text);
     margin-bottom: 32px;
     letter-spacing: 0.02em;
 }
 
-/* DECISION: Two-column layout inside modal.
-       Left = story (wider). Right = quick facts.
-       Newspaper column feel — consistent with the
-       overall design language. */
+.modal-desc {
+    margin-top: 10px;
+    font-size: 14px;
+    color: var(--text-muted);
+    font-family: var(--font-body);
+    line-height: 1.8;
+    margin-bottom: 16px;
+    font-weight: 300;
+}
+
+/* ============================================
+   MODAL GRID — Desktop: 2 columns
+============================================ */
+
 .modal-grid {
     display: grid;
     grid-template-columns: 1fr 280px;
@@ -606,6 +607,7 @@
 .modal-story p {
     font-size: 14px;
     color: var(--text-muted);
+    font-family: var(--font-body);
     line-height: 1.8;
     margin-bottom: 16px;
     font-weight: 300;
@@ -638,6 +640,8 @@
     flex-direction: column;
     gap: 8px;
     list-style: none;
+    padding: 0;
+    margin: 0;
 }
 
 .modal-tech-list li {
@@ -678,203 +682,34 @@
     text-transform: uppercase;
 }
 
+/* ============================================
+   MODAL ACTIONS
+============================================ */
+
 .modal-actions {
     display: flex;
+    flex-wrap: wrap;
     gap: 16px;
     padding-top: 32px;
     border-top: 1px solid var(--border);
+    align-items: center;
+    width: 100%;
+    margin-top: 20px;
 }
 
-.section-label {
-    animation: fadeSlideUp 0.5s ease both;
-}
-
-/* Animate the ::after line growing */
-.section-label::after {
-    animation: accentLineGrow 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.3s both;
-}
-
-/* ============================================
-   PROJECT CARD ANIMATIONS
-============================================ */
-
-/* Cards stagger in when grid is visible */
-.projects-grid .project-card {
-    animation: scaleIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
-}
-
-/* Stagger each card */
-.projects-grid .project-card:nth-child(1) {
-    animation-delay: 0.05s;
-}
-
-.projects-grid .project-card:nth-child(2) {
-    animation-delay: 0.12s;
-}
-
-.projects-grid .project-card:nth-child(3) {
-    animation-delay: 0.19s;
-}
-
-.projects-grid .project-card:nth-child(4) {
-    animation-delay: 0.26s;
-}
-
-.projects-grid .project-card:nth-child(5) {
-    animation-delay: 0.33s;
-}
-
-.projects-grid .project-card:nth-child(6) {
-    animation-delay: 0.40s;
-}
-
-/* Border pulse on new card entrance — runs once */
-.project-card {
-    animation: borderPulse 1.2s ease 0.6s 2;
-}
-
-/* Tag slides in from left on hover */
-.project-card:hover .project-tag {
-    animation: slideInLeft 0.25s ease both;
-}
-
-/* Project name subtle scale on hover */
-.project-card:hover .project-name {
-    transition: letter-spacing 0.3s ease;
-    letter-spacing: 0.04em;
-}
-
-/* Tech pills pop in on hover */
-.project-card:hover .tech-pill {
-    animation: pillPop 0.3s ease both;
-}
-
-.project-card:hover .tech-pill:nth-child(1) {
-    animation-delay: 0.00s;
-}
-
-.project-card:hover .tech-pill:nth-child(2) {
-    animation-delay: 0.05s;
-}
-
-.project-card:hover .tech-pill:nth-child(3) {
-    animation-delay: 0.10s;
-}
-
-.project-card:hover .tech-pill:nth-child(4) {
-    animation-delay: 0.15s;
-}
-
-.project-card:hover .tech-pill:nth-child(5) {
-    animation-delay: 0.20s;
-}
-
-/* View details arrow bounces on card hover */
-.project-card:hover .view-details::after {
-    display: inline-block;
-    animation: iconBounce 0.6s ease infinite;
-}
-
-/* Project link arrow animates continuously on link hover */
-.project-link:hover::after {
-    animation: iconBounce 0.5s ease infinite;
-}
-
-/* ============================================
-   MODAL ANIMATIONS
-============================================ */
-
-/* Modal slides up smoothly — already handled by
-   transform, but we layer content animations on top */
-
-/* Modal tag */
-.modal-overlay.active .modal-tag {
-    animation: fadeSlideUp 0.4s ease 0.2s both;
-}
-
-/* Modal title — big dramatic entrance */
-.modal-overlay.active .modal-title {
-    animation: fadeSlideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.3s both;
-}
-
-/* Modal grid — story and sidebar */
-.modal-overlay.active .modal-story {
-    animation: slideInLeft 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.4s both;
-}
-
-.modal-overlay.active .modal-sidebar {
-    animation: slideInRight 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.45s both;
-}
-
-/* Modal sidebar blocks stagger */
-.modal-overlay.active .modal-sidebar-block:nth-child(1) {
-    animation: fadeSlideUp 0.4s ease 0.5s both;
-}
-
-.modal-overlay.active .modal-sidebar-block:nth-child(2) {
-    animation: fadeSlideUp 0.4s ease 0.6s both;
-}
-
-.modal-overlay.active .modal-sidebar-block:nth-child(3) {
-    animation: fadeSlideUp 0.4s ease 0.7s both;
-}
-
-/* Tech list items stagger in */
-.modal-overlay.active .modal-tech-list li {
-    animation: slideInLeft 0.35s ease both;
-}
-
-.modal-overlay.active .modal-tech-list li:nth-child(1) {
-    animation-delay: 0.55s;
-}
-
-.modal-overlay.active .modal-tech-list li:nth-child(2) {
-    animation-delay: 0.62s;
-}
-
-.modal-overlay.active .modal-tech-list li:nth-child(3) {
-    animation-delay: 0.69s;
-}
-
-.modal-overlay.active .modal-tech-list li:nth-child(4) {
-    animation-delay: 0.76s;
-}
-
-.modal-overlay.active .modal-tech-list li:nth-child(5) {
-    animation-delay: 0.83s;
-}
-
-/* Tech list dot pulse on entrance */
-.modal-overlay.active .modal-tech-list li::before {
-    animation: scaleIn 0.3s ease both;
-}
-
-/* Modal highlight block */
-.modal-overlay.active .modal-highlight {
-    animation: fadeSlideUp 0.5s ease 0.65s both;
-}
-
-/* Modal actions slide up last */
-.modal-overlay.active .modal-actions {
-    animation: fadeSlideUp 0.4s ease 0.7s both;
-}
-
-/* Modal close button fades in */
-.modal-overlay.active .modal-close {
-    animation: fadeIn 0.3s ease 0.5s both;
-}
-
-/* Close button hover — subtle scale */
-.modal-close {
-    transition: border-color 0.2s, color 0.2s, transform 0.15s ease;
-}
-
-.modal-close:hover {
-    transform: scale(0.96);
-}
-
-/* Modal action button shimmer effect */
 .modal-actions a {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 12px 24px;
+    background-color: var(--accent);
+    color: black;
+    text-align: center;
+    text-decoration: none;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
     position: relative;
     overflow: hidden;
     transition: opacity 0.2s, transform 0.2s ease;
@@ -907,20 +742,642 @@
 }
 
 /* ============================================
-   DIVIDER ANIMATION
+   MODAL CONTENT ANIMATIONS
+============================================ */
+
+.modal-overlay.active .modal-tag {
+    animation: fadeSlideUp 0.4s ease 0.2s both;
+}
+
+.modal-overlay.active .modal-title {
+    animation: fadeSlideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.3s both;
+}
+
+.modal-overlay.active .modal-story {
+    animation: slideInLeft 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.4s both;
+}
+
+.modal-overlay.active .modal-sidebar {
+    animation: slideInRight 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.45s both;
+}
+
+.modal-overlay.active .modal-sidebar-block:nth-child(1) {
+    animation: fadeSlideUp 0.4s ease 0.5s both;
+}
+
+.modal-overlay.active .modal-sidebar-block:nth-child(2) {
+    animation: fadeSlideUp 0.4s ease 0.6s both;
+}
+
+.modal-overlay.active .modal-sidebar-block:nth-child(3) {
+    animation: fadeSlideUp 0.4s ease 0.7s both;
+}
+
+.modal-overlay.active .modal-tech-list li {
+    animation: slideInLeft 0.35s ease both;
+}
+
+.modal-overlay.active .modal-tech-list li:nth-child(1) {
+    animation-delay: 0.55s;
+}
+
+.modal-overlay.active .modal-tech-list li:nth-child(2) {
+    animation-delay: 0.62s;
+}
+
+.modal-overlay.active .modal-tech-list li:nth-child(3) {
+    animation-delay: 0.69s;
+}
+
+.modal-overlay.active .modal-tech-list li:nth-child(4) {
+    animation-delay: 0.76s;
+}
+
+.modal-overlay.active .modal-tech-list li:nth-child(5) {
+    animation-delay: 0.83s;
+}
+
+.modal-overlay.active .modal-tech-list li::before {
+    animation: scaleIn 0.3s ease both;
+}
+
+.modal-overlay.active .modal-highlight {
+    animation: fadeSlideUp 0.5s ease 0.65s both;
+}
+
+.modal-overlay.active .modal-actions {
+    animation: fadeSlideUp 0.4s ease 0.7s both;
+}
+
+.modal-overlay.active .modal-close {
+    animation: fadeIn 0.3s ease 0.5s both;
+}
+
+/* ============================================
+   DIVIDER
 ============================================ */
 
 .divider {
+    width: 100%;
+    height: 1px;
+    background: var(--border);
     animation: scaleIn 0.5s ease both;
     transform-origin: left;
 }
 
 /* ============================================
-   REDUCED MOTION — ACCESSIBILITY
-   DECISION: Respect user OS preference.
-   Never force animations on users who
-   have opted out for medical reasons.
+   RESPONSIVE — TABLET (max 768px)
+   Covers iPads, small tablets, large phones
+   in landscape orientation.
 ============================================ */
+
+@media (max-width: 768px) {
+    .projects-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+
+        gap: 20px;
+    }
+
+
+    .project-card {
+        padding: 28px 24px;
+    }
+
+    .project-name {
+        font-size: clamp(22px, 6vw, 32px);
+    }
+
+    .project-desc {
+        font-size: 13px;
+        margin-bottom: 20px;
+    }
+
+    .project-tech {
+        margin-bottom: 20px;
+    }
+
+    .project-links {
+        gap: 16px;
+    }
+
+    .section-label {
+        margin-bottom: 32px;
+        font-size: 10px;
+        letter-spacing: 0.2em;
+    }
+
+    /* Modal responsive */
+    .modal {
+        padding: 32px 24px;
+        max-height: 92vh;
+        border-radius: 16px 16px 0 0;
+    }
+
+    .modal-close {
+        top: 16px;
+        right: 16px;
+        font-size: 10px;
+        padding: 6px 12px;
+    }
+
+    .modal-title {
+        font-size: clamp(28px, 8vw, 56px);
+        margin-bottom: 24px;
+        padding-right: 60px;
+    }
+
+    .modal-grid {
+        grid-template-columns: 1fr;
+        gap: 28px;
+    }
+
+    .modal-sidebar {
+        gap: 24px;
+    }
+
+    .modal-highlight {
+        padding: 14px 16px;
+        font-size: 11px;
+    }
+
+    .modal-actions {
+        padding-top: 24px;
+    }
+
+    .modal-actions a {
+        padding: 10px 20px;
+        font-size: 11px;
+        flex: 1;
+        min-width: 140px;
+    }
+
+    /* Bottom sheet responsive */
+    #bottomSheet {
+        padding: 32px 24px;
+        border-radius: 16px 16px 0 0;
+    }
+
+    .sheet-title {
+        font-size: clamp(24px, 6vw, 40px);
+        margin-bottom: 20px;
+    }
+
+    .sheet-body {
+        font-size: 13px;
+    }
+
+    #sheetHandle {
+        margin-bottom: 20px;
+    }
+}
+
+/* ============================================
+   RESPONSIVE — MOBILE (max 480px)
+   Covers most smartphones including
+   iPhone SE, standard Android phones.
+============================================ */
+
+@media (max-width: 480px) {
+    .projects-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+
+    .project-card {
+        padding: 24px 20px;
+        border-left-width: 2px;
+    }
+
+    .project-tag {
+        font-size: 9px;
+        margin-bottom: 12px;
+    }
+
+    .project-name {
+        font-size: clamp(20px, 5.5vw, 28px);
+        margin-bottom: 12px;
+    }
+
+    .project-desc {
+        font-size: 12.5px;
+        line-height: 1.65;
+        margin-bottom: 16px;
+    }
+
+    .project-tech {
+        gap: 6px;
+        margin-bottom: 16px;
+    }
+
+    .tech-pill {
+        font-size: 9px;
+        padding: 3px 8px;
+    }
+
+    .project-links {
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .project-link {
+        font-size: 10px;
+    }
+
+    .project-card .view-details {
+        font-size: 10px;
+        margin-top: 12px;
+        padding-top: 12px;
+    }
+
+    .section-label {
+        margin-bottom: 24px;
+        font-size: 9px;
+        gap: 10px;
+        letter-spacing: 0.15em;
+    }
+
+    .section-label::after {
+        max-width: 40px;
+    }
+
+    /* Modal — full mobile treatment */
+    .modal {
+        padding: 24px 16px;
+        max-height: 95vh;
+        border-radius: 12px 12px 0 0;
+    }
+
+    .modal-close {
+        top: 12px;
+        right: 12px;
+        font-size: 9px;
+        padding: 5px 10px;
+    }
+
+    .modal-tag {
+        font-size: 9px;
+    }
+
+    .modal-title {
+        font-size: clamp(24px, 7vw, 40px);
+        margin-bottom: 20px;
+        padding-right: 50px;
+        line-height: 1;
+    }
+
+    .modal-desc {
+        font-size: 13px;
+    }
+
+    .modal-grid {
+        grid-template-columns: 1fr;
+        gap: 24px;
+        margin-bottom: 28px;
+    }
+
+    .modal-story h3 {
+        font-size: 9px;
+        margin-bottom: 12px;
+        padding-bottom: 10px;
+    }
+
+    .modal-story p {
+        font-size: 13px;
+        line-height: 1.7;
+        margin-bottom: 12px;
+    }
+
+    .modal-sidebar {
+        gap: 20px;
+    }
+
+    .modal-sidebar-block h4 {
+        font-size: 9px;
+        margin-bottom: 10px;
+        padding-bottom: 8px;
+    }
+
+    .modal-tech-list li {
+        font-size: 12px;
+        gap: 6px;
+    }
+
+    .modal-tech-list li::before {
+        width: 3px;
+        height: 3px;
+    }
+
+    .modal-highlight {
+        padding: 12px 14px;
+        font-size: 11px;
+        margin-top: 16px;
+        border-left-width: 2px;
+    }
+
+    .modal-highlight strong {
+        font-size: 9px;
+    }
+
+    .modal-actions {
+        flex-direction: column;
+        gap: 12px;
+        padding-top: 20px;
+        margin-top: 16px;
+    }
+
+    .modal-actions a {
+        padding: 12px 20px;
+        font-size: 11px;
+        width: 100%;
+    }
+
+    /* Bottom sheet — mobile */
+    #bottomSheet {
+        padding: 24px 16px;
+        max-height: 95vh;
+        border-radius: 12px 12px 0 0;
+    }
+
+    .sheet-tag {
+        font-size: 9px;
+    }
+
+    .sheet-title {
+        font-size: clamp(22px, 5.5vw, 32px);
+        margin-bottom: 16px;
+    }
+
+    .sheet-body {
+        font-size: 12.5px;
+        line-height: 1.7;
+    }
+
+    #sheetHandle {
+        width: 32px;
+        height: 3px;
+        margin-bottom: 16px;
+    }
+
+    /* Disable hover transforms on touch — prevent sticky states */
+    .project-card:hover {
+        transform: none;
+        box-shadow: none;
+    }
+
+    .project-card:active {
+        border-color: var(--accent);
+        box-shadow: 0 0 20px rgba(200, 255, 0, 0.06);
+        transform: scale(0.99);
+    }
+}
+
+/* ============================================
+   RESPONSIVE — VERY SMALL (max 380px)
+   Covers iPhone SE (1st gen), small Android
+   phones like Moto G series, Galaxy A series.
+============================================ */
+
+@media (max-width: 380px) {
+    .skills-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .about-stats {
+        gap: 16px;
+    }
+
+    .stat-number {
+        font-size: 36px;
+    }
+
+    .projects-grid {
+        gap: 12px;
+    }
+
+    .project-card {
+        padding: 20px 16px;
+    }
+
+    .project-name {
+        font-size: clamp(18px, 5vw, 24px);
+    }
+
+    .project-desc {
+        font-size: 12px;
+    }
+
+    .tech-pill {
+        font-size: 8px;
+        padding: 2px 6px;
+    }
+
+    .modal {
+        padding: 20px 14px;
+    }
+
+    .modal-title {
+        font-size: clamp(22px, 6.5vw, 36px);
+        padding-right: 40px;
+    }
+
+    .modal-story p {
+        font-size: 12px;
+    }
+
+    .modal-tech-list li {
+        font-size: 11px;
+    }
+
+    .modal-actions a {
+        padding: 10px 16px;
+        font-size: 10px;
+    }
+
+    #bottomSheet {
+        padding: 20px 14px;
+    }
+
+    .sheet-title {
+        font-size: clamp(20px, 5vw, 28px);
+    }
+}
+
+
+
+/* ============================================
+   RESPONSIVE — LARGE DESKTOP (min 1200px)
+   Ensures proper spacing and sizing on
+   ultrawide / large monitors.
+============================================ */
+
+@media (max-width: 1150px) {
+    .projects-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+        gap: 24px;
+    }
+}
+
+@media (min-width: 1200px) {
+    .projects-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+    }
+
+    .project-card {
+        padding: 40px;
+    }
+
+    .modal {
+        padding: 56px;
+        max-width: 920px;
+    }
+
+    .modal-grid {
+        grid-template-columns: 1fr 300px;
+        gap: 56px;
+    }
+
+    #bottomSheet {
+        padding: 56px;
+        max-width: 920px;
+    }
+}
+
+/* ============================================
+   RESPONSIVE — ULTRAWIDE (min 1600px)
+   Prevents content from stretching too
+   wide on large displays.
+============================================ */
+
+@media (min-width: 1600px) {
+    .projects-grid {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 20px;
+    }
+
+    .modal {
+        max-width: 960px;
+    }
+
+    #bottomSheet {
+        max-width: 960px;
+    }
+}
+
+/* ============================================
+   RESPONSIVE — LANDSCAPE MOBILE
+   Phones held sideways — limited height,
+   wide viewport. Modal must not overflow.
+============================================ */
+
+@media (max-height: 500px) and (orientation: landscape) {
+    .modal {
+        max-height: 100vh;
+        padding: 20px 32px;
+        border-radius: 0;
+    }
+
+    .modal-title {
+        font-size: clamp(24px, 4vw, 36px);
+        margin-bottom: 16px;
+    }
+
+    .modal-grid {
+        grid-template-columns: 1fr 220px;
+        gap: 24px;
+        margin-bottom: 20px;
+    }
+
+    .modal-close {
+        top: 10px;
+        right: 10px;
+    }
+
+    #bottomSheet {
+        max-height: 100vh;
+        padding: 20px 32px;
+        border-radius: 0;
+    }
+
+    .sheet-title {
+        font-size: clamp(20px, 4vw, 32px);
+    }
+
+    #sheetHandle {
+        margin-bottom: 12px;
+    }
+
+    .modal-actions {
+        padding-top: 16px;
+        margin-top: 12px;
+    }
+}
+
+/* ============================================
+   TOUCH DEVICE OPTIMIZATIONS
+   Use coarse pointer detection to adjust
+   tap targets for finger-friendly interaction.
+============================================ */
+
+@media (pointer: coarse) {
+    .project-link {
+        padding: 8px 4px;
+        font-size: 12px;
+    }
+
+    .tech-pill {
+        padding: 6px 12px;
+    }
+
+    .modal-close {
+        min-width: 44px;
+        min-height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .modal-actions a {
+        min-height: 44px;
+    }
+
+    .project-card .view-details {
+        padding-top: 14px;
+        margin-top: 14px;
+        font-size: 12px;
+    }
+}
+
+/* ============================================
+   HIGH DPI / RETINA ADJUSTMENTS
+   Ensure thin borders remain crisp on
+   high-resolution displays.
+============================================ */
+
+@media (-webkit-min-device-pixel-ratio: 2),
+(min-resolution: 192dpi) {
+    .project-card::before {
+        height: 0.5px;
+    }
+
+    .divider {
+        height: 0.5px;
+    }
+
+    .section-label::after {
+        height: 0.5px;
+    }
+}
+
+/* ============================================
+   REDUCED MOTION — ACCESSIBILITY
+   Respect user OS preference. Never force
+   animations on users who have opted out
+   for medical reasons.
+============================================ */
+
 @media (prefers-reduced-motion: reduce) {
 
     *,
@@ -929,5 +1386,6 @@
         animation-duration: 0.01ms !important;
         animation-iteration-count: 1 !important;
         transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
     }
 }

@@ -66,6 +66,7 @@ const projectMap = Object.fromEntries(projects.map((p) => [p.id, p]));
                             <span class="tech-pill">{t}</span>
                         ))}
                     </div>
+
                     <div class="view-details">View Case Study</div>
                 </div>
             ))
@@ -85,8 +86,9 @@ const projectMap = Object.fromEntries(projects.map((p) => [p.id, p]));
             <div class="modal-story">
                 <h3>The Problem & Solution</h3>
 
-                <div id="modalStory"></div>
+                <p id="modalStory" class="modal-story"></p>
                 <div class="modal-highlight" id="modalHighlight"></div>
+                <div class="modal-desc" id="modalDesc"></div>
             </div>
 
             <div class="modal-sidebar">
@@ -113,6 +115,7 @@ const projectMap = Object.fromEntries(projects.map((p) => [p.id, p]));
         document.getElementById("modalTag").textContent = p.tag ?? "";
         document.getElementById("modalTitle").textContent = p.title ?? "";
         document.getElementById("modalStory").innerHTML = p.story ?? "";
+        document.getElementById("modalDesc").innerHTML = p.description ?? "";
         document.getElementById("modalHighlight").innerHTML = p.highlight ?? "";
 
         // Tech
