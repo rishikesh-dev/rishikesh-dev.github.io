@@ -1,0 +1,1495 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rishikesh K — Flutter Developer</title>
+
+  <!--
+    DECISION: Fonts
+    - Bebas Neue → Giant hero headlines. Free, extreme, editorial. Makes a statement.
+    - Epilogue → Body + subheadings. Sharp, modern, slightly condensed. Not overused.
+    - IBM Plex Mono → Labels, tags, code snippets. Signals "developer" instantly.
+    Avoided: Space Grotesk, Inter, Roboto — too common, too safe.
+  -->
+  <link
+    href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Epilogue:wght@300;400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap"
+    rel="stylesheet">
+
+  <style>
+    /* ============================================
+       DECISION: CSS Variables
+       Central design tokens — change one place,
+       updates everywhere. Senior engineering habit.
+    ============================================ */
+    :root {
+      --bg: #080808;
+      /* near black — pure black feels flat */
+      --surface: #0f0f0f;
+      /* card backgrounds */
+      --surface2: #161616;
+      /* elevated surfaces */
+      --border: #1e1e1e;
+      /* subtle borders */
+      --border2: #2a2a2a;
+      /* visible borders */
+      --accent: #C8FF00;
+      /* electric lime — punchy, unexpected, memorable */
+      --accent-dim: #8fb300;
+      /* dimmed accent for hover states */
+      --text: #F0F0F0;
+      /* near white — pure white causes eye strain */
+      --text-muted: #555555;
+      /* secondary text */
+      --text-dim: #333333;
+      /* barely visible decorative text */
+      --font-display: 'Bebas Neue', sans-serif;
+      --font-body: 'Epilogue', sans-serif;
+      --font-mono: 'IBM Plex Mono', monospace;
+    }
+
+    /* ============================================
+       DECISION: Box sizing reset
+       Prevents width calculations from breaking
+       when padding is added — standard practice.
+    ============================================ */
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      font-size: 16px;
+      line-height: 1.6;
+      overflow-x: hidden;
+      /* DECISION: Subtle noise texture overlay
+         Adds depth to flat dark backgrounds.
+         Pure #080808 feels like a void — noise makes it feel designed. */
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+    }
+
+    /* ============================================
+       NAVBAR
+       DECISION: Fixed navbar with blur backdrop.
+       Keeps navigation accessible while scrolling.
+       Blur + border creates glass feel without
+       heavy glassmorphism on the whole page.
+    ============================================ */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 48px;
+      border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      background: rgba(8, 8, 8, 0.85);
+    }
+
+    .nav-logo {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      color: var(--accent);
+      letter-spacing: 0.05em;
+      text-decoration: none;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 40px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--text-muted);
+      text-decoration: none;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover {
+      color: var(--text);
+    }
+
+    /* ============================================
+       HERO SECTION
+       DECISION: Giant Bebas Neue headline.
+       Bebas Neue at 180px is a design statement —
+       it fills space, communicates confidence,
+       and is immediately memorable.
+
+       DECISION: Asymmetric layout.
+       Left-aligned text with right side breathing
+       room feels editorial, not centered/generic.
+    ============================================ */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 0 48px 80px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* DECISION: Large decorative background text
+       Adds depth and visual interest without
+       cluttering the layout. Newspaper-inspired. */
+    .hero-bg-text {
+      position: absolute;
+      top: 50%;
+      right: -20px;
+      transform: translateY(-50%);
+      font-family: var(--font-display);
+      font-size: clamp(200px, 25vw, 380px);
+      color: var(--text-dim);
+      line-height: 1;
+      pointer-events: none;
+      user-select: none;
+      letter-spacing: -0.02em;
+    }
+
+    .hero-tag {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--accent);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .hero-tag::before {
+      content: '';
+      width: 32px;
+      height: 1px;
+      background: var(--accent);
+    }
+
+    .hero-headline {
+      font-family: var(--font-display);
+      /* DECISION: clamp() for responsive font size.
+         Scales smoothly between mobile and desktop
+         without media query breakpoints. */
+      font-size: clamp(80px, 14vw, 180px);
+      line-height: 0.9;
+      letter-spacing: -0.01em;
+      color: var(--text);
+      margin-bottom: 32px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-headline span {
+      /* DECISION: Accent color on last name only.
+         Creates visual hierarchy — first name reads
+         as label, last name as the memorable element. */
+      color: var(--accent);
+    }
+
+    .hero-bottom {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-desc {
+      max-width: 380px;
+      font-size: 15px;
+      color: var(--text-muted);
+      line-height: 1.7;
+      font-weight: 300;
+    }
+
+    .hero-cta {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+    }
+
+    /* DECISION: Two button styles — filled and ghost.
+       Filled = primary action (see work).
+       Ghost = secondary action (GitHub).
+       Clear visual hierarchy. */
+    .btn-primary {
+      padding: 14px 32px;
+      background: var(--accent);
+      color: #000;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.2s;
+    }
+
+    .btn-primary:hover {
+      background: var(--accent-dim);
+      transform: translateY(-2px);
+    }
+
+    .btn-ghost {
+      padding: 14px 32px;
+      background: transparent;
+      color: var(--text);
+      font-family: var(--font-mono);
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      text-decoration: none;
+      border: 1px solid var(--border2);
+      cursor: pointer;
+      transition: border-color 0.2s, color 0.2s;
+    }
+
+    .btn-ghost:hover {
+      border-color: var(--text-muted);
+      color: var(--text);
+    }
+
+    /* Scroll indicator */
+    .scroll-hint {
+      position: absolute;
+      bottom: 32px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--text-muted);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      animation: bounce 2s infinite;
+    }
+
+    .scroll-hint::after {
+      content: '';
+      width: 1px;
+      height: 40px;
+      background: linear-gradient(to bottom, var(--text-muted), transparent);
+    }
+
+    @keyframes bounce {
+
+      0%,
+      100% {
+        transform: translateX(-50%) translateY(0);
+      }
+
+      50% {
+        transform: translateX(-50%) translateY(6px);
+      }
+    }
+
+    /* ============================================
+       SECTION SHARED STYLES
+    ============================================ */
+    section {
+      padding: 120px 48px;
+      position: relative;
+    }
+
+    /* DECISION: Monospace section labels with number.
+       Newspaper-inspired. Creates clear hierarchy
+       and reinforces "developer" identity. */
+    .section-label {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--accent);
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      margin-bottom: 48px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .section-label span {
+      color: var(--text-dim);
+      font-size: 10px;
+    }
+
+    .section-label::after {
+      content: '';
+      flex: 1;
+      max-width: 80px;
+      height: 1px;
+      background: var(--border2);
+    }
+
+    /* ============================================
+       ABOUT SECTION
+       DECISION: Two-column newspaper layout.
+       Left = big statement. Right = details.
+       Creates editorial, magazine-like feel.
+    ============================================ */
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: start;
+    }
+
+    .about-headline {
+      font-family: var(--font-display);
+      font-size: clamp(48px, 6vw, 88px);
+      line-height: 0.95;
+      letter-spacing: -0.01em;
+      color: var(--text);
+    }
+
+    .about-headline em {
+      font-style: normal;
+      color: var(--accent);
+    }
+
+    .about-body {
+      padding-top: 8px;
+    }
+
+    .about-body p {
+      font-size: 15px;
+      color: var(--text-muted);
+      line-height: 1.8;
+      margin-bottom: 24px;
+      font-weight: 300;
+    }
+
+    .about-body p strong {
+      color: var(--text);
+      font-weight: 500;
+    }
+
+    /* Stats row */
+    .about-stats {
+      display: flex;
+      gap: 40px;
+      margin-top: 40px;
+      padding-top: 40px;
+      border-top: 1px solid var(--border);
+    }
+
+    .stat {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .stat-number {
+      font-family: var(--font-display);
+      font-size: 48px;
+      color: var(--accent);
+      line-height: 1;
+    }
+
+    .stat-label {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--text-muted);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+    }
+
+    /* ============================================
+       PROJECTS SECTION
+       DECISION: Glassmorphism cards with glow.
+       Each card = frosted glass surface with
+       accent glow on hover. Modern, premium feel.
+       Bold border on left = newspaper-style marker.
+    ============================================ */
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+      gap: 24px;
+    }
+
+    .project-card {
+      background: rgba(15, 15, 15, 0.8);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      padding: 36px;
+      position: relative;
+      cursor: pointer;
+      transition: border-color 0.3s, box-shadow 0.3s, transform 0.3s;
+      backdrop-filter: blur(10px);
+      overflow: hidden;
+    }
+
+    /* DECISION: Glow effect on hover only.
+       Constant glow = visual noise.
+       Hover glow = delightful interaction. */
+    .project-card:hover {
+      border-color: var(--accent);
+      box-shadow: 0 0 40px rgba(200, 255, 0, 0.08),
+        0 0 80px rgba(200, 255, 0, 0.04);
+      transform: translateY(-4px);
+    }
+
+    /* Subtle gradient overlay on card */
+    .project-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, var(--accent), transparent);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .project-card:hover::before {
+      opacity: 1;
+    }
+
+    .project-tag {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--accent);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+
+    .project-name {
+      font-family: var(--font-display);
+      font-size: 36px;
+      color: var(--text);
+      line-height: 1;
+      margin-bottom: 16px;
+      letter-spacing: 0.02em;
+    }
+
+    .project-desc {
+      font-size: 14px;
+      color: var(--text-muted);
+      line-height: 1.7;
+      margin-bottom: 28px;
+      font-weight: 300;
+    }
+
+    .project-tech {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 28px;
+    }
+
+    .tech-pill {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--text-muted);
+      border: 1px solid var(--border2);
+      padding: 4px 10px;
+      letter-spacing: 0.05em;
+    }
+
+    .project-links {
+      display: flex;
+      gap: 20px;
+    }
+
+    .project-link {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-muted);
+      text-decoration: none;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: color 0.2s;
+    }
+
+    .project-link:hover {
+      color: var(--accent);
+    }
+
+    .project-link::after {
+      content: '→';
+      transition: transform 0.2s;
+    }
+
+    .project-link:hover::after {
+      transform: translateX(4px);
+    }
+
+    /* ============================================
+       SKILLS SECTION
+       DECISION: Grid of skill categories with
+       bold borders and monospace labels.
+       Brutalist-inspired but refined.
+    ============================================ */
+    .skills-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+    }
+
+    .skill-category {
+      background: var(--bg);
+      padding: 36px 32px;
+      transition: background 0.2s;
+    }
+
+    .skill-category:hover {
+      background: var(--surface);
+    }
+
+    .skill-category-title {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--accent);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border2);
+    }
+
+    .skill-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      list-style: none;
+    }
+
+    .skill-list li {
+      font-size: 14px;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 300;
+      transition: color 0.2s;
+    }
+
+    .skill-list li:hover {
+      color: var(--text);
+    }
+
+    .skill-list li::before {
+      content: '';
+      width: 4px;
+      height: 4px;
+      background: var(--accent);
+      flex-shrink: 0;
+    }
+
+    /* ============================================
+       CONTACT SECTION
+       DECISION: Raw, minimal, one giant CTA.
+       Contact sections are often cluttered.
+       This one has one job — get Richi hired.
+    ============================================ */
+    .contact-inner {
+      max-width: 800px;
+    }
+
+    .contact-headline {
+      font-family: var(--font-display);
+      font-size: clamp(64px, 10vw, 140px);
+      line-height: 0.9;
+      letter-spacing: -0.01em;
+      color: var(--text);
+      margin-bottom: 40px;
+    }
+
+    .contact-headline span {
+      color: var(--accent);
+    }
+
+    .contact-desc {
+      font-size: 15px;
+      color: var(--text-muted);
+      max-width: 440px;
+      line-height: 1.8;
+      margin-bottom: 48px;
+      font-weight: 300;
+    }
+
+    .contact-links {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .contact-email {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      color: var(--text);
+      text-decoration: none;
+      padding: 16px 32px;
+      border: 1px solid var(--border2);
+      letter-spacing: 0.05em;
+      transition: border-color 0.2s, color 0.2s;
+    }
+
+    .contact-email:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    /* ============================================
+       FOOTER
+    ============================================ */
+    footer {
+      padding: 32px 48px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .footer-text {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-muted);
+      letter-spacing: 0.05em;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 32px;
+    }
+
+    .footer-links a {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-muted);
+      text-decoration: none;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+
+    .footer-links a:hover {
+      color: var(--accent);
+    }
+
+    /* ============================================
+       ANIMATIONS
+       DECISION: Subtle fade-in on load only.
+       No constant animations — they distract.
+       One clean entrance, then content is static.
+    ============================================ */
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(24px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .hero-tag {
+      animation: fadeUp 0.6s ease forwards;
+      animation-delay: 0.1s;
+      opacity: 0;
+    }
+
+    .hero-headline {
+      animation: fadeUp 0.6s ease forwards;
+      animation-delay: 0.2s;
+      opacity: 0;
+    }
+
+    .hero-bottom {
+      animation: fadeUp 0.6s ease forwards;
+      animation-delay: 0.35s;
+      opacity: 0;
+    }
+
+    /* ============================================
+       RESPONSIVE — TABLET (max 900px)
+       DECISION: 900px breakpoint.
+       Most tablets are 768–900px. Catching both
+       landscape tablet and large phone in one rule.
+    ============================================ */
+    @media (max-width: 900px) {
+
+      /* Navbar — hide links, show logo only */
+      nav {
+        padding: 16px 24px;
+      }
+
+      .nav-links {
+        display: none;
+      }
+
+      /* Hero */
+      .hero {
+        padding: 0 24px 64px;
+      }
+
+      .hero-bottom {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 32px;
+      }
+
+      .hero-desc {
+        max-width: 100%;
+      }
+
+      /* About — stack columns vertically */
+      .about-grid {
+        grid-template-columns: 1fr;
+        gap: 40px;
+      }
+
+      section {
+        padding: 80px 24px;
+      }
+
+      /* Modal — full width on tablet */
+      .modal {
+        padding: 36px 28px;
+        max-height: 85vh;
+      }
+
+      .modal-grid {
+        grid-template-columns: 1fr;
+        gap: 32px;
+      }
+    }
+
+    /* ============================================
+       RESPONSIVE — MOBILE (max 600px)
+       DECISION: 600px breakpoint.
+       Covers all modern phones including large ones.
+    ============================================ */
+    @media (max-width: 600px) {
+
+      /* Nav */
+      nav {
+        padding: 14px 20px;
+      }
+
+      /* Hero */
+      .hero {
+        padding: 0 20px 56px;
+        justify-content: flex-end;
+      }
+
+      /* DECISION: Hide giant background RK text on mobile.
+         At small sizes it overlaps content badly.
+         Better to remove it than let it clutter. */
+      .hero-bg-text {
+        display: none;
+      }
+
+      .hero-cta {
+        flex-direction: column;
+        width: 100%;
+      }
+
+      .btn-primary,
+      .btn-ghost {
+        width: 100%;
+        text-align: center;
+        padding: 16px;
+      }
+
+      /* Section padding */
+      section {
+        padding: 64px 20px;
+      }
+
+      .section-label {
+        margin-bottom: 32px;
+      }
+
+      /* About stats — wrap on very small screens */
+      .about-stats {
+        flex-wrap: wrap;
+        gap: 24px;
+      }
+
+      /* Projects — single column */
+      .projects-grid {
+        grid-template-columns: 1fr;
+      }
+
+      /* Skills — two columns on mobile */
+      .skills-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      /* Contact */
+      .contact-links {
+        flex-direction: column;
+      }
+
+      .contact-email {
+        text-align: center;
+      }
+
+      /* Footer — stack vertically */
+      footer {
+        padding: 24px 20px;
+        flex-direction: column;
+        gap: 16px;
+        text-align: center;
+      }
+
+      .footer-links {
+        gap: 20px;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+
+      /* Modal */
+      .modal {
+        padding: 28px 20px;
+        max-height: 92vh;
+        border-radius: 0;
+      }
+
+      .modal-close {
+        top: 16px;
+        right: 16px;
+        font-size: 10px;
+        padding: 6px 12px;
+      }
+
+      .modal-title {
+        font-size: clamp(40px, 12vw, 64px);
+      }
+
+      .modal-grid {
+        grid-template-columns: 1fr;
+        gap: 28px;
+      }
+
+      .modal-actions {
+        flex-direction: column;
+      }
+
+      .modal-actions .btn-primary {
+        text-align: center;
+        width: 100%;
+      }
+    }
+
+    /* ============================================
+       RESPONSIVE — VERY SMALL (max 380px)
+       DECISION: Covers small Android phones
+       like Moto G series common in India.
+    ============================================ */
+    @media (max-width: 380px) {
+      .skills-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .about-stats {
+        gap: 16px;
+      }
+
+      .stat-number {
+        font-size: 36px;
+      }
+    }
+
+    /* ============================================
+       HORIZONTAL DIVIDER
+    ============================================ */
+    .divider {
+      width: 100%;
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* ============================================
+       PROJECT MODAL
+       DECISION: Fixed overlay with blur backdrop.
+       Keeps user on the same page — no routing needed.
+       Blur on background maintains context so the
+       user never feels lost.
+
+       DECISION: Modal slides up from bottom.
+       More natural on both mobile and desktop than
+       a fade-in-center approach. Feels intentional.
+    ============================================ */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 200;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .modal {
+      background: var(--surface);
+      border: 1px solid var(--border2);
+      border-bottom: none;
+      width: 100%;
+      max-width: 860px;
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: 48px;
+      position: relative;
+      transform: translateY(40px);
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      /* DECISION: cubic-bezier spring curve.
+         Feels more physical than linear — snaps into
+         place like a real drawer opening. */
+    }
+
+    .modal-overlay.active .modal {
+      transform: translateY(0);
+    }
+
+    /* DECISION: Scrollbar styling.
+       Dark scrollbar matches the design — browser
+       default scrollbar would look out of place. */
+    .modal::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    .modal::-webkit-scrollbar-track {
+      background: var(--surface);
+    }
+
+    .modal::-webkit-scrollbar-thumb {
+      background: var(--border2);
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 24px;
+      right: 24px;
+      background: none;
+      border: 1px solid var(--border2);
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      padding: 8px 16px;
+      cursor: pointer;
+      transition: border-color 0.2s, color 0.2s;
+    }
+
+    .modal-close:hover {
+      border-color: var(--text-muted);
+      color: var(--text);
+    }
+
+    .modal-tag {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--accent);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    .modal-title {
+      font-family: var(--font-display);
+      font-size: clamp(48px, 8vw, 88px);
+      line-height: 0.9;
+      color: var(--text);
+      margin-bottom: 32px;
+      letter-spacing: 0.02em;
+    }
+
+    /* DECISION: Two-column layout inside modal.
+       Left = story (wider). Right = quick facts.
+       Newspaper column feel — consistent with the
+       overall design language. */
+    .modal-grid {
+      display: grid;
+      grid-template-columns: 1fr 280px;
+      gap: 48px;
+      margin-bottom: 40px;
+    }
+
+    .modal-story h3 {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--accent);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .modal-story p {
+      font-size: 14px;
+      color: var(--text-muted);
+      line-height: 1.8;
+      margin-bottom: 16px;
+      font-weight: 300;
+    }
+
+    .modal-story p strong {
+      color: var(--text);
+      font-weight: 500;
+    }
+
+    .modal-sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+    }
+
+    .modal-sidebar-block h4 {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--accent);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .modal-tech-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      list-style: none;
+    }
+
+    .modal-tech-list li {
+      font-size: 13px;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 300;
+    }
+
+    .modal-tech-list li::before {
+      content: '';
+      width: 4px;
+      height: 4px;
+      background: var(--accent);
+      flex-shrink: 0;
+    }
+
+    .modal-highlight {
+      background: var(--surface2);
+      border-left: 3px solid var(--accent);
+      padding: 16px 20px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--text-muted);
+      line-height: 1.6;
+      margin-top: 24px;
+    }
+
+    .modal-highlight strong {
+      color: var(--accent);
+      display: block;
+      margin-bottom: 4px;
+      font-size: 10px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 16px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+    }
+
+    /* Make project cards clickable */
+    .project-card {
+      cursor: pointer;
+    }
+
+    .project-card .view-details {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-muted);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: color 0.2s;
+    }
+
+    .project-card:hover .view-details {
+      color: var(--accent);
+    }
+
+    .project-card .view-details::after {
+      content: '↗';
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <a href="#" class="nav-logo">RK.DEV</a>
+    <ul class="nav-links">
+      <li><a href="#about">About</a></li>
+      <li><a href="#projects">Projects</a></li>
+      <li><a href="#skills">Skills</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-bg-text">RK</div>
+
+    <div class="hero-tag">Flutter Developer · India</div>
+
+    <h1 class="hero-headline">
+      RISHI<br><span>KESH K</span>
+    </h1>
+
+    <div class="hero-bottom">
+      <p class="hero-desc">
+        Self-taught Flutter developer building real, shipped products.
+        Clean Architecture. Bloc. RevenueCat. One app on the Play Store.
+      </p>
+      <div class="hero-cta">
+        <a href="#projects" class="btn-primary">View Work</a>
+        <a href="https://github.com/rishikesh-dev" class="btn-ghost" target="_blank">GitHub</a>
+      </div>
+    </div>
+
+    <div class="scroll-hint">scroll</div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ABOUT -->
+  <section id="about">
+    <div class="section-label">
+      <span>01</span> About
+    </div>
+    <div class="about-grid">
+      <div class="about-headline">
+        BUILDING<br>THINGS<br>THAT <em>WORK</em>
+      </div>
+      <div class="about-body">
+        <p>
+          I'm a <strong>self-taught Flutter developer</strong> from Kerala, India.
+          I don't just follow tutorials — I build real products, solve real problems,
+          and ship them to real users.
+        </p>
+        <p>
+          My focus is <strong>Clean Architecture, Bloc state management,</strong> and
+          writing code that's easy to maintain, extend, and defend in a code review.
+        </p>
+        <p>
+          Currently looking for my first engineering role where I can
+          contribute to a real team and keep growing fast.
+        </p>
+        <div class="about-stats">
+          <div class="stat">
+            <div class="stat-number">1</div>
+            <div class="stat-label">Live App</div>
+          </div>
+          <div class="stat">
+            <div class="stat-number">5+</div>
+            <div class="stat-label">Projects</div>
+          </div>
+          <div class="stat">
+            <div class="stat-number">100+</div>
+            <div class="stat-label">Downloads</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- PROJECTS -->
+  <section id="projects">
+    <div class="section-label">
+      <span>02</span> Projects
+    </div>
+    <div class="projects-grid">
+
+      <div class="project-card" onclick="openModal('journeo')">
+        <div class="project-tag">Featured · Live on Play Store</div>
+        <div class="project-name">JOURNEO</div>
+        <p class="project-desc">
+          A mood journaling app with streak tracking, local notifications,
+          home screen widget, and RevenueCat subscription model. Built with
+          Clean Architecture and Bloc.
+        </p>
+        <div class="project-tech">
+          <span class="tech-pill">Flutter</span>
+          <span class="tech-pill">Bloc</span>
+          <span class="tech-pill">Clean Arch</span>
+          <span class="tech-pill">RevenueCat</span>
+          <span class="tech-pill">home_widget</span>
+        </div>
+        <div class="view-details">View Case Study</div>
+      </div>
+
+      <div class="project-card" onclick="openModal('qrmaster')">
+        <div class="project-tag">Utility</div>
+        <div class="project-name">QR MASTER</div>
+        <p class="project-desc">
+          A QR code generator and scanner with support for multiple QR types,
+          history tracking, and export functionality.
+        </p>
+        <div class="project-tech">
+          <span class="tech-pill">Flutter</span>
+          <span class="tech-pill">Hive</span>
+          <span class="tech-pill">mobile_scanner</span>
+        </div>
+        <div class="view-details">View Case Study</div>
+      </div>
+
+      <div class="project-card" onclick="openModal('expense')">
+        <div class="project-tag">Finance</div>
+        <div class="project-name">EXPENSE TRACKER</div>
+        <p class="project-desc">
+          Personal finance tracker with category breakdowns, monthly summaries,
+          and clean data visualisation built entirely in Flutter.
+        </p>
+        <div class="project-tech">
+          <span class="tech-pill">Flutter</span>
+          <span class="tech-pill">Bloc</span>
+          <span class="tech-pill">SQLite</span>
+          <span class="tech-pill">fl_chart</span>
+        </div>
+        <div class="view-details">View Case Study</div>
+      </div>
+
+      <div class="project-card" onclick="openModal('noteapp')">
+        <div class="project-tag">Productivity</div>
+        <div class="project-name">NOTE APP</div>
+        <p class="project-desc">
+          A minimal note-taking app with rich text support, local storage,
+          and a distraction-free writing experience.
+        </p>
+        <div class="project-tech">
+          <span class="tech-pill">Flutter</span>
+          <span class="tech-pill">Hive</span>
+          <span class="tech-pill">flutter_quill</span>
+        </div>
+        <div class="view-details">View Case Study</div>
+      </div>
+
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- SKILLS -->
+  <section id="skills">
+    <div class="section-label">
+      <span>03</span> Skills
+    </div>
+    <div class="skills-grid">
+      <div class="skill-category">
+        <div class="skill-category-title">Core</div>
+        <ul class="skill-list">
+          <li>Flutter</li>
+          <li>Dart</li>
+          <li>Clean Architecture</li>
+          <li>Bloc / Cubit</li>
+        </ul>
+      </div>
+      <div class="skill-category">
+        <div class="skill-category-title">Data & Storage</div>
+        <ul class="skill-list">
+          <li>SQLite / Hive</li>
+          <li>Local Storage</li>
+          <li>REST APIs</li>
+          <li>Firebase</li>
+        </ul>
+      </div>
+      <div class="skill-category">
+        <div class="skill-category-title">Mobile</div>
+        <ul class="skill-list">
+          <li>Android (Kotlin bridge)</li>
+          <li>Home Screen Widgets</li>
+          <li>Push Notifications</li>
+          <li>RevenueCat</li>
+        </ul>
+      </div>
+      <div class="skill-category">
+        <div class="skill-category-title">Tools</div>
+        <ul class="skill-list">
+          <li>Git / GitHub</li>
+          <li>VS Code</li>
+          <li>Android Studio</li>
+          <li>Figma</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- CONTACT -->
+  <section id="contact">
+    <div class="section-label">
+      <span>04</span> Contact
+    </div>
+    <div class="contact-inner">
+      <h2 class="contact-headline">LET'S<br><span>TALK.</span></h2>
+      <p class="contact-desc">
+        I'm actively looking for my first engineering role.
+        If you're building something with Flutter or need a developer
+        who ships real products — reach out.
+      </p>
+      <div class="contact-links">
+        <a href="/cdn-cgi/l/email-protection#25574c564d4c4e40564d4e0b574c464d4c654248444c490b464a48"
+          class="btn-primary">Send Email</a>
+        <a href="https://linkedin.com/in/rishikesh-k-richi" class="contact-email" target="_blank">LinkedIn</a>
+        <a href="https://github.com/rishikesh-dev" class="contact-email" target="_blank">GitHub</a>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- FOOTER -->
+  <footer>
+    <span class="footer-text">© 2026 Rishikesh K — Built with Jaspr</span>
+    <div class="footer-links">
+      <a href="https://github.com/rishikesh-dev" target="_blank">GitHub</a>
+      <a href="https://linkedin.com/in/rishikesh-k-richi" target="_blank">LinkedIn</a>
+      <a href="https://play.google.com/store/apps/details?id=com.rishikeshk.journeo" target="_blank">Play Store</a>
+    </div>
+  </footer>
+
+  <!-- PROJECT MODAL -->
+  <div class="modal-overlay" id="modalOverlay" onclick="handleOverlayClick(event)">
+    <div class="modal" id="modal">
+      <button class="modal-close" onclick="closeModal()">ESC / CLOSE</button>
+      <div class="modal-tag" id="modalTag"></div>
+      <div class="modal-title" id="modalTitle"></div>
+      <div class="modal-grid">
+        <div class="modal-story">
+          <h3>The Problem &amp; Solution</h3>
+          <div id="modalStory"></div>
+          <div class="modal-highlight" id="modalHighlight"></div>
+        </div>
+        <div class="modal-sidebar">
+          <div class="modal-sidebar-block">
+            <h4>Tech Stack</h4>
+            <ul class="modal-tech-list" id="modalTech"></ul>
+          </div>
+          <div class="modal-sidebar-block">
+            <h4>Key Decisions</h4>
+            <ul class="modal-tech-list" id="modalDecisions"></ul>
+          </div>
+        </div>
+      </div>
+      <div class="modal-actions" id="modalActions"></div>
+    </div>
+  </div>
+
+  <script>
+    // DECISION: Data-driven modal.
+    // All project content lives in one JS object.
+    // When you add a new project, you only add one
+    // entry here — the modal HTML never changes.
+
+
+    function openModal(id) {
+      const p = projects[id];
+      if (!p) return;
+
+      document.getElementById('modalTag').textContent = p.tag;
+      document.getElementById('modalTitle').textContent = p.title;
+      document.getElementById('modalStory').innerHTML = p.story;
+      document.getElementById('modalHighlight').innerHTML = p.highlight;
+
+      const techList = document.getElementById('modalTech');
+      techList.innerHTML = p.tech.map(t => `<li>${t}</li>`).join('');
+
+      const decList = document.getElementById('modalDecisions');
+      decList.innerHTML = p.decisions.map(d => `<li>${d}</li>`).join('');
+
+      const actions = document.getElementById('modalActions');
+      actions.innerHTML = p.links.map(l =>
+        `<a href="${l.url}" target="_blank" class="btn-primary" style="text-decoration:none">${l.label}</a>`
+      ).join('');
+
+      document.getElementById('modalOverlay').classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal() {
+      document.getElementById('modalOverlay').classList.remove('active');
+      document.body.style.overflow = '';
+    }
+
+    // DECISION: Click outside modal to close.
+    // Standard UX pattern — users expect this.
+    function handleOverlayClick(e) {
+      if (e.target === document.getElementById('modalOverlay')) {
+        closeModal();
+      }
+    }
+
+    // DECISION: ESC key to close.
+    // Keyboard accessibility — important for
+    // developers reviewing your portfolio on desktop.
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') closeModal();
+    });
+  </script>
+
+</body>
+
+</html>

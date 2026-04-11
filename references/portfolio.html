@@ -1,0 +1,1076 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>RICHI — Developer Portfolio</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Share+Tech+Mono&family=Exo+2:wght@300;400;600&display=swap" rel="stylesheet"/>
+  <style>
+    /* ═══════════════════════════════════════════
+       DESIGN DECISION: CSS Variables — Single source of truth.
+       Changing --accent here updates every glow, border, highlight.
+    ═══════════════════════════════════════════ */
+    :root {
+      --bg:       #050a0f;
+      --bg2:      #080f17;
+      --surface:  #0d1a24;
+      --accent:   #00f5ff;
+      --accent2:  #7b2fff;
+      --text:     #c8e6f0;
+      --muted:    #4a7a8a;
+      --danger:   #ff2d55;
+      --glow:     0 0 8px #00f5ff88, 0 0 24px #00f5ff33;
+      --glow-lg:  0 0 16px #00f5ffaa, 0 0 48px #00f5ff44, 0 0 80px #00f5ff22;
+    }
+
+    /* ═══════════════════════════════════════════
+       DESIGN DECISION: Custom scrollbar — tiny detail that elevates
+       the immersion. Every pixel of the page belongs to the aesthetic.
+    ═══════════════════════════════════════════ */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 2px; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Share Tech Mono', monospace;
+      overflow-x: hidden;
+      cursor: none; /* DESIGN DECISION: Custom cursor — replaces the default */
+    }
+
+    /* ═══════════════════════════════════════════
+       CUSTOM CURSOR — Why: standard cursor breaks immersion
+    ═══════════════════════════════════════════ */
+    .cursor {
+      position: fixed;
+      width: 12px; height: 12px;
+      background: var(--accent);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 10000;
+      transform: translate(-50%, -50%);
+      transition: transform 0.1s, width 0.2s, height 0.2s;
+      box-shadow: var(--glow);
+    }
+    .cursor-ring {
+      position: fixed;
+      width: 36px; height: 36px;
+      border: 1px solid var(--accent);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9999;
+      transform: translate(-50%, -50%);
+      transition: transform 0.15s ease-out, width 0.2s, height 0.2s;
+      opacity: 0.5;
+    }
+    body:hover .cursor { opacity: 1; }
+
+    /* ═══════════════════════════════════════════
+       ANIMATED GRID BACKGROUND — Why: gives the page a "data space"
+       feel. Pure CSS — zero JS, zero performance cost.
+    ═══════════════════════════════════════════ */
+    .grid-bg {
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(0,245,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,245,255,0.03) 1px, transparent 1px);
+      background-size: 60px 60px;
+      pointer-events: none;
+      z-index: 0;
+      animation: gridPan 20s linear infinite;
+    }
+    @keyframes gridPan {
+      0% { background-position: 0 0; }
+      100% { background-position: 60px 60px; }
+    }
+
+    /* SCANLINES overlay */
+    .scanlines {
+      position: fixed;
+      inset: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0,0,0,0.08) 2px,
+        rgba(0,0,0,0.08) 4px
+      );
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* ═══════════════════════════════════════════
+       NAV — Why: sticky nav with blur keeps orientation
+       without blocking content. Corner brackets = HUD style.
+    ═══════════════════════════════════════════ */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 1000;
+      padding: 18px 60px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(5,10,15,0.7);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(0,245,255,0.1);
+    }
+    .nav-logo {
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 900;
+      font-size: 1.2rem;
+      color: var(--accent);
+      text-shadow: var(--glow);
+      letter-spacing: 0.3em;
+    }
+    .nav-logo span { color: var(--text); }
+    .nav-links { display: flex; gap: 40px; list-style: none; }
+    .nav-links a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.75rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      transition: color 0.3s, text-shadow 0.3s;
+      position: relative;
+    }
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -4px; left: 0; right: 0;
+      height: 1px;
+      background: var(--accent);
+      transform: scaleX(0);
+      transition: transform 0.3s;
+      box-shadow: var(--glow);
+    }
+    .nav-links a:hover { color: var(--accent); text-shadow: var(--glow); }
+    .nav-links a:hover::after { transform: scaleX(1); }
+
+    /* ════════════════════════════════════════════════
+       HERO SECTION — Why: full viewport with animated
+       typewriter headline. First impression = unforgettable.
+    ════════════════════════════════════════════════ */
+    #hero {
+      position: relative;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      padding: 0 60px;
+      z-index: 2;
+      overflow: hidden;
+    }
+
+    /* Diagonal accent line — DESIGN DECISION:
+       Asymmetric element that breaks the grid for visual tension */
+    .hero-line {
+      position: absolute;
+      top: 0; right: 30%;
+      width: 1px;
+      height: 100%;
+      background: linear-gradient(to bottom, transparent, var(--accent), transparent);
+      opacity: 0.3;
+    }
+
+    /* Corner brackets around hero content — HUD framing */
+    .hero-content {
+      position: relative;
+      max-width: 700px;
+      padding: 40px;
+    }
+    .hero-content::before, .hero-content::after {
+      content: '';
+      position: absolute;
+      width: 30px; height: 30px;
+      border-color: var(--accent);
+      border-style: solid;
+      opacity: 0.6;
+    }
+    .hero-content::before {
+      top: 0; left: 0;
+      border-width: 2px 0 0 2px;
+    }
+    .hero-content::after {
+      bottom: 0; right: 0;
+      border-width: 0 2px 2px 0;
+    }
+
+    .hero-tag {
+      color: var(--accent);
+      font-size: 0.75rem;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      margin-bottom: 24px;
+      opacity: 0;
+      animation: fadeSlideUp 0.6s 0.3s forwards;
+    }
+    .hero-name {
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 900;
+      font-size: clamp(3rem, 6vw, 5.5rem);
+      line-height: 1;
+      color: #fff;
+      letter-spacing: -0.02em;
+      margin-bottom: 16px;
+      opacity: 0;
+      animation: fadeSlideUp 0.6s 0.5s forwards;
+    }
+    .hero-name .accent { color: var(--accent); text-shadow: var(--glow-lg); }
+
+    /* DESIGN DECISION: Typewriter role — dynamic roles cycle through,
+       making the hero interactive and alive without extra JS libraries */
+    .hero-role {
+      font-size: 1.1rem;
+      color: var(--muted);
+      margin-bottom: 32px;
+      opacity: 0;
+      animation: fadeSlideUp 0.6s 0.7s forwards;
+      min-height: 1.6em;
+    }
+    .typewriter {
+      color: var(--accent);
+      border-right: 2px solid var(--accent);
+      animation: blink 0.7s step-end infinite;
+    }
+    @keyframes blink { 50% { border-color: transparent; } }
+
+    .hero-desc {
+      color: var(--muted);
+      font-family: 'Exo 2', sans-serif;
+      font-weight: 300;
+      line-height: 1.8;
+      font-size: 0.95rem;
+      max-width: 480px;
+      margin-bottom: 48px;
+      opacity: 0;
+      animation: fadeSlideUp 0.6s 0.9s forwards;
+    }
+
+    .hero-btns {
+      display: flex;
+      gap: 20px;
+      opacity: 0;
+      animation: fadeSlideUp 0.6s 1.1s forwards;
+    }
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 32px;
+      background: transparent;
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      text-decoration: none;
+      cursor: none;
+      position: relative;
+      overflow: hidden;
+      transition: color 0.3s, box-shadow 0.3s;
+    }
+    .btn-primary::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--accent);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.3s;
+      z-index: -1;
+    }
+    .btn-primary:hover::before { transform: scaleX(1); }
+    .btn-primary:hover {
+      color: var(--bg);
+      box-shadow: var(--glow-lg);
+    }
+    .btn-ghost {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 32px;
+      background: transparent;
+      border: 1px solid rgba(0,245,255,0.2);
+      color: var(--muted);
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      text-decoration: none;
+      cursor: none;
+      transition: color 0.3s, border-color 0.3s;
+    }
+    .btn-ghost:hover { color: var(--text); border-color: var(--accent); }
+
+    /* Floating orb — DESIGN DECISION: adds depth and draws
+       the eye without being distracting. */
+    .hero-orb {
+      position: absolute;
+      right: 10%;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 320px;
+      height: 320px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%,
+        rgba(123,47,255,0.3),
+        rgba(0,245,255,0.15) 40%,
+        transparent 70%);
+      border: 1px solid rgba(0,245,255,0.15);
+      animation: orbPulse 4s ease-in-out infinite;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .hero-orb::before {
+      content: '';
+      position: absolute;
+      inset: 20px;
+      border-radius: 50%;
+      border: 1px dashed rgba(0,245,255,0.2);
+      animation: spin 12s linear infinite;
+    }
+    .hero-orb::after {
+      content: '';
+      position: absolute;
+      inset: 50px;
+      border-radius: 50%;
+      border: 1px dashed rgba(123,47,255,0.3);
+      animation: spin 8s linear infinite reverse;
+    }
+    .orb-code {
+      font-size: 0.65rem;
+      color: rgba(0,245,255,0.5);
+      text-align: center;
+      line-height: 2;
+      z-index: 1;
+    }
+    @keyframes orbPulse {
+      0%, 100% { box-shadow: 0 0 40px rgba(0,245,255,0.1); }
+      50% { box-shadow: 0 0 80px rgba(0,245,255,0.2), 0 0 120px rgba(123,47,255,0.1); }
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Scroll indicator */
+    .scroll-hint {
+      position: absolute;
+      bottom: 40px;
+      left: 60px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: var(--muted);
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      opacity: 0;
+      animation: fadeSlideUp 0.6s 1.5s forwards;
+    }
+    .scroll-line {
+      width: 40px;
+      height: 1px;
+      background: var(--muted);
+      position: relative;
+      overflow: hidden;
+    }
+    .scroll-line::after {
+      content: '';
+      position: absolute;
+      top: 0; left: -100%;
+      width: 100%;
+      height: 100%;
+      background: var(--accent);
+      animation: scanLine 2s ease-in-out infinite;
+    }
+    @keyframes scanLine {
+      0% { left: -100%; }
+      100% { left: 100%; }
+    }
+
+    /* ════════════════════════════════════════════════
+       SECTION COMMONS
+    ════════════════════════════════════════════════ */
+    section {
+      position: relative;
+      z-index: 2;
+      padding: 120px 60px;
+    }
+    .section-header {
+      margin-bottom: 72px;
+    }
+    .section-num {
+      display: block;
+      color: var(--accent);
+      font-size: 0.7rem;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+    .section-title {
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 700;
+      font-size: clamp(2rem, 4vw, 3rem);
+      color: #fff;
+      letter-spacing: -0.02em;
+      position: relative;
+    }
+    .section-title::after {
+      content: '';
+      display: block;
+      width: 60px;
+      height: 2px;
+      background: var(--accent);
+      margin-top: 16px;
+      box-shadow: var(--glow);
+    }
+
+    /* ════════════════════════════════════════════════
+       PROJECTS — Why: card-based grid with hover lift
+       and neon border reveal. Shows work without clutter.
+    ════════════════════════════════════════════════ */
+    #projects { background: var(--bg2); }
+
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 24px;
+    }
+    .project-card {
+      background: var(--surface);
+      border: 1px solid rgba(0,245,255,0.08);
+      padding: 36px;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
+      cursor: none;
+    }
+    .project-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 2px;
+      background: linear-gradient(to right, var(--accent), var(--accent2));
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.4s;
+      box-shadow: var(--glow);
+    }
+    .project-card:hover { transform: translateY(-6px); border-color: rgba(0,245,255,0.3); box-shadow: 0 20px 60px rgba(0,0,0,0.5); }
+    .project-card:hover::before { transform: scaleX(1); }
+
+    .card-badge {
+      display: inline-block;
+      padding: 4px 12px;
+      background: rgba(0,245,255,0.08);
+      border: 1px solid rgba(0,245,255,0.2);
+      color: var(--accent);
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+    .card-title {
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 600;
+      font-size: 1.15rem;
+      color: #fff;
+      margin-bottom: 12px;
+      letter-spacing: 0.03em;
+    }
+    .card-desc {
+      color: var(--muted);
+      font-family: 'Exo 2', sans-serif;
+      font-size: 0.9rem;
+      line-height: 1.7;
+      margin-bottom: 24px;
+    }
+    .card-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 28px;
+    }
+    .tag {
+      padding: 3px 10px;
+      background: rgba(123,47,255,0.1);
+      border: 1px solid rgba(123,47,255,0.25);
+      color: #a78bfa;
+      font-size: 0.65rem;
+      letter-spacing: 0.1em;
+    }
+    .card-link {
+      color: var(--accent);
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: gap 0.2s;
+    }
+    .card-link:hover { gap: 16px; }
+    .card-num {
+      position: absolute;
+      bottom: 24px;
+      right: 28px;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 3rem;
+      font-weight: 900;
+      color: rgba(0,245,255,0.04);
+      line-height: 1;
+      user-select: none;
+    }
+
+    /* ════════════════════════════════════════════════
+       SKILLS — Why: Horizontal bar charts in a terminal
+       style feel native to a dev portfolio. Bars animate
+       on scroll for engagement.
+    ════════════════════════════════════════════════ */
+    #skills { background: var(--bg); }
+
+    .skills-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: start;
+    }
+    .skills-group { margin-bottom: 48px; }
+    .skills-group-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.7rem;
+      color: var(--accent);
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      margin-bottom: 28px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid rgba(0,245,255,0.1);
+    }
+    .skill-item { margin-bottom: 20px; }
+    .skill-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+    .skill-name { font-size: 0.8rem; color: var(--text); letter-spacing: 0.1em; }
+    .skill-pct { font-size: 0.75rem; color: var(--accent); }
+    .skill-track {
+      height: 3px;
+      background: rgba(0,245,255,0.08);
+      position: relative;
+      overflow: hidden;
+    }
+    .skill-fill {
+      position: absolute;
+      top: 0; left: 0; bottom: 0;
+      background: linear-gradient(to right, var(--accent), var(--accent2));
+      width: 0;
+      transition: width 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: var(--glow);
+    }
+    .skill-fill.animated { width: var(--w); }
+
+    /* Right side: tool grid */
+    .tools-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+    .tool-item {
+      border: 1px solid rgba(0,245,255,0.1);
+      background: var(--surface);
+      padding: 18px 12px;
+      text-align: center;
+      font-size: 0.75rem;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+      transition: border-color 0.3s, color 0.3s, box-shadow 0.3s;
+      cursor: none;
+    }
+    .tool-item:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      box-shadow: var(--glow);
+    }
+    .tool-icon { font-size: 1.4rem; display: block; margin-bottom: 6px; }
+
+    /* ════════════════════════════════════════════════
+       CONTACT — Why: minimal with a direct CTA. The noise
+       background adds texture without competing with the form.
+    ════════════════════════════════════════════════ */
+    #contact {
+      background: var(--bg2);
+      min-height: 60vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .contact-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: start;
+    }
+    .contact-info p {
+      color: var(--muted);
+      font-family: 'Exo 2', sans-serif;
+      line-height: 1.9;
+      font-size: 0.95rem;
+      margin-bottom: 40px;
+    }
+    .contact-links { display: flex; flex-direction: column; gap: 16px; }
+    .contact-link {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.8rem;
+      letter-spacing: 0.1em;
+      padding: 14px 20px;
+      border: 1px solid rgba(0,245,255,0.08);
+      background: var(--surface);
+      transition: color 0.3s, border-color 0.3s, box-shadow 0.3s;
+      cursor: none;
+    }
+    .contact-link:hover {
+      color: var(--accent);
+      border-color: rgba(0,245,255,0.3);
+      box-shadow: var(--glow);
+    }
+    .contact-link span { color: var(--accent); font-size: 1rem; }
+
+    /* Contact form — DESIGN DECISION: terminal-style inputs
+       with no border-radius. Perfectly on-brand. */
+    .contact-form { display: flex; flex-direction: column; gap: 16px; }
+    .form-group { display: flex; flex-direction: column; gap: 8px; }
+    .form-label {
+      font-size: 0.65rem;
+      color: var(--accent);
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+    }
+    .form-input, .form-textarea {
+      background: var(--surface);
+      border: 1px solid rgba(0,245,255,0.12);
+      color: var(--text);
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.85rem;
+      padding: 14px 18px;
+      outline: none;
+      transition: border-color 0.3s, box-shadow 0.3s;
+      resize: none;
+    }
+    .form-input:focus, .form-textarea:focus {
+      border-color: var(--accent);
+      box-shadow: var(--glow);
+    }
+    .form-textarea { min-height: 120px; }
+    .form-submit {
+      align-self: flex-start;
+      padding: 14px 40px;
+      background: var(--accent);
+      border: none;
+      color: var(--bg);
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      cursor: none;
+      transition: box-shadow 0.3s, transform 0.2s;
+    }
+    .form-submit:hover {
+      box-shadow: var(--glow-lg);
+      transform: translateY(-2px);
+    }
+
+    /* ════════════════════════════════════════════════
+       FOOTER
+    ════════════════════════════════════════════════ */
+    footer {
+      position: relative;
+      z-index: 2;
+      border-top: 1px solid rgba(0,245,255,0.08);
+      padding: 32px 60px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--bg);
+    }
+    footer p { font-size: 0.7rem; color: var(--muted); letter-spacing: 0.15em; }
+    footer p span { color: var(--accent); }
+
+    /* ════════════════════════════════════════════════
+       ANIMATIONS
+    ════════════════════════════════════════════════ */
+    @keyframes fadeSlideUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ════════════════════════════════════════════════
+       GLITCH EFFECT — DESIGN DECISION: Glitch on the
+       hero name creates a hacker-aesthetic moment.
+       Pure CSS text-shadow animation.
+    ════════════════════════════════════════════════ */
+    .glitch {
+      position: relative;
+    }
+    .glitch::before, .glitch::after {
+      content: attr(data-text);
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 900;
+    }
+    .glitch::before {
+      color: var(--accent);
+      animation: glitch1 3.5s infinite;
+      clip-path: polygon(0 0, 100% 0, 100% 35%, 0 35%);
+    }
+    .glitch::after {
+      color: var(--accent2);
+      animation: glitch2 3.5s infinite;
+      clip-path: polygon(0 65%, 100% 65%, 100% 100%, 0 100%);
+    }
+    @keyframes glitch1 {
+      0%, 90%, 100% { transform: none; opacity: 0; }
+      91% { transform: translate(-3px, 1px); opacity: 0.7; }
+      93% { transform: translate(3px, -1px); opacity: 0.7; }
+      95% { transform: translate(-2px, 2px); opacity: 0.7; }
+      97% { transform: none; opacity: 0; }
+    }
+    @keyframes glitch2 {
+      0%, 88%, 100% { transform: none; opacity: 0; }
+      89% { transform: translate(3px, 2px); opacity: 0.5; }
+      91% { transform: translate(-3px, -1px); opacity: 0.5; }
+      93% { transform: translate(2px, -2px); opacity: 0.5; }
+      95% { transform: none; opacity: 0; }
+    }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      nav { padding: 16px 24px; }
+      .nav-links { gap: 24px; }
+      #hero { padding: 0 24px; }
+      .hero-orb { display: none; }
+      section { padding: 80px 24px; }
+      .skills-layout { grid-template-columns: 1fr; gap: 48px; }
+      .contact-inner { grid-template-columns: 1fr; gap: 48px; }
+      footer { flex-direction: column; gap: 12px; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Custom cursor -->
+  <div class="cursor" id="cursor"></div>
+  <div class="cursor-ring" id="cursor-ring"></div>
+
+  <!-- Background effects -->
+  <div class="grid-bg"></div>
+  <div class="scanlines"></div>
+
+  <!-- ▓▓▓ NAVIGATION ▓▓▓ -->
+  <nav>
+    <div class="nav-logo">RICHI<span>.</span>DEV</div>
+    <ul class="nav-links">
+      <li><a href="#hero">Home</a></li>
+      <li><a href="#projects">Projects</a></li>
+      <li><a href="#skills">Skills</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- ▓▓▓ HERO ▓▓▓ -->
+  <section id="hero">
+    <div class="hero-line"></div>
+
+    <div class="hero-content">
+      <p class="hero-tag">&lt; Developer &amp; Engineer /&gt;</p>
+      <h1 class="hero-name">
+        <span class="glitch" data-text="RICHI">RICHI</span><br/>
+        <span class="accent" style="font-size:0.6em; letter-spacing:0.08em;">PORTFOLIO</span>
+      </h1>
+      <p class="hero-role">
+        I build &nbsp;<span class="typewriter" id="typewriter"></span>
+      </p>
+      <p class="hero-desc">
+        Crafting high-performance systems, elegant interfaces, and infrastructure that scales.
+        Code is my medium. Precision is my standard.
+      </p>
+      <div class="hero-btns">
+        <a href="#projects" class="btn-primary">View Projects →</a>
+        <a href="#contact" class="btn-ghost">Get In Touch</a>
+      </div>
+    </div>
+
+    <div class="hero-orb">
+      <div class="orb-code">
+        &gt; init_portfolio()<br/>
+        &gt; loading assets...<br/>
+        &gt; status: ONLINE<br/>
+        &gt; user: RICHI<br/>
+        &gt; mode: BUILD
+      </div>
+    </div>
+
+    <div class="scroll-hint">
+      <div class="scroll-line"></div>
+      Scroll to explore
+    </div>
+  </section>
+
+  <!-- ▓▓▓ PROJECTS ▓▓▓ -->
+  <section id="projects">
+    <div class="section-header">
+      <span class="section-num">// 01 — Projects</span>
+      <h2 class="section-title">Selected Work</h2>
+    </div>
+
+    <div class="projects-grid">
+      <div class="project-card">
+        <span class="card-badge">Web App</span>
+        <h3 class="card-title">Neural Dashboard</h3>
+        <p class="card-desc">Real-time analytics platform processing 10M+ events/day. Built with distributed architecture and sub-100ms query performance.</p>
+        <div class="card-tags">
+          <span class="tag">React</span>
+          <span class="tag">Node.js</span>
+          <span class="tag">Redis</span>
+          <span class="tag">PostgreSQL</span>
+        </div>
+        <a href="#" class="card-link">View Project →</a>
+        <span class="card-num">01</span>
+      </div>
+
+      <div class="project-card">
+        <span class="card-badge">CLI Tool</span>
+        <h3 class="card-title">DevSync CLI</h3>
+        <p class="card-desc">Automated deployment pipeline tool that cuts deploy time by 70%. Integrates with GitHub Actions, Docker, and Kubernetes clusters.</p>
+        <div class="card-tags">
+          <span class="tag">Python</span>
+          <span class="tag">Docker</span>
+          <span class="tag">K8s</span>
+          <span class="tag">GitHub Actions</span>
+        </div>
+        <a href="#" class="card-link">View Project →</a>
+        <span class="card-num">02</span>
+      </div>
+
+      <div class="project-card">
+        <span class="card-badge">Mobile</span>
+        <h3 class="card-title">Void Tracker</h3>
+        <p class="card-desc">Cross-platform productivity app with offline-first architecture. 4.8★ rating, 50K+ downloads. AI-powered task prioritization.</p>
+        <div class="card-tags">
+          <span class="tag">React Native</span>
+          <span class="tag">TypeScript</span>
+          <span class="tag">SQLite</span>
+        </div>
+        <a href="#" class="card-link">View Project →</a>
+        <span class="card-num">03</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ▓▓▓ SKILLS ▓▓▓ -->
+  <section id="skills">
+    <div class="section-header">
+      <span class="section-num">// 02 — Skills</span>
+      <h2 class="section-title">Tech Stack</h2>
+    </div>
+
+    <div class="skills-layout">
+      <div>
+        <div class="skills-group">
+          <p class="skills-group-title">// Frontend</p>
+          <div class="skill-item">
+            <div class="skill-header"><span class="skill-name">React / Next.js</span><span class="skill-pct">92%</span></div>
+            <div class="skill-track"><div class="skill-fill" style="--w: 92%"></div></div>
+          </div>
+          <div class="skill-item">
+            <div class="skill-header"><span class="skill-name">TypeScript</span><span class="skill-pct">88%</span></div>
+            <div class="skill-track"><div class="skill-fill" style="--w: 88%"></div></div>
+          </div>
+          <div class="skill-item">
+            <div class="skill-header"><span class="skill-name">CSS / Tailwind</span><span class="skill-pct">85%</span></div>
+            <div class="skill-track"><div class="skill-fill" style="--w: 85%"></div></div>
+          </div>
+        </div>
+
+        <div class="skills-group">
+          <p class="skills-group-title">// Backend</p>
+          <div class="skill-item">
+            <div class="skill-header"><span class="skill-name">Node.js / Express</span><span class="skill-pct">90%</span></div>
+            <div class="skill-track"><div class="skill-fill" style="--w: 90%"></div></div>
+          </div>
+          <div class="skill-item">
+            <div class="skill-header"><span class="skill-name">Python / FastAPI</span><span class="skill-pct">82%</span></div>
+            <div class="skill-track"><div class="skill-fill" style="--w: 82%"></div></div>
+          </div>
+          <div class="skill-item">
+            <div class="skill-header"><span class="skill-name">PostgreSQL / Redis</span><span class="skill-pct">78%</span></div>
+            <div class="skill-track"><div class="skill-fill" style="--w: 78%"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <p class="skills-group-title">// Tools & Platforms</p>
+        <div class="tools-grid">
+          <div class="tool-item"><span class="tool-icon">🐳</span>Docker</div>
+          <div class="tool-item"><span class="tool-icon">☸️</span>Kubernetes</div>
+          <div class="tool-item"><span class="tool-icon">☁️</span>AWS</div>
+          <div class="tool-item"><span class="tool-icon">🔧</span>Git</div>
+          <div class="tool-item"><span class="tool-icon">⚡</span>Vite</div>
+          <div class="tool-item"><span class="tool-icon">🤖</span>Linux</div>
+          <div class="tool-item"><span class="tool-icon">🔐</span>Auth0</div>
+          <div class="tool-item"><span class="tool-icon">📊</span>Grafana</div>
+          <div class="tool-item"><span class="tool-icon">🚀</span>Vercel</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ▓▓▓ CONTACT ▓▓▓ -->
+  <section id="contact">
+    <div class="section-header">
+      <span class="section-num">// 03 — Contact</span>
+      <h2 class="section-title">Let's Build</h2>
+    </div>
+
+    <div class="contact-inner">
+      <div class="contact-info">
+        <p>Have a project in mind? Looking for a developer who ships fast and thinks deep? Let's connect — I respond within 24 hours.</p>
+        <div class="contact-links">
+          <a href="mailto:richi@dev.com" class="contact-link">
+            <span>✉</span> richi@dev.com
+          </a>
+          <a href="#" class="contact-link">
+            <span>🔗</span> linkedin.com/in/richi
+          </a>
+          <a href="#" class="contact-link">
+            <span>⌥</span> github.com/richi
+          </a>
+        </div>
+      </div>
+
+      <form class="contact-form" onsubmit="handleSubmit(event)">
+        <div class="form-group">
+          <label class="form-label">Name</label>
+          <input type="text" class="form-input" placeholder="Your name" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input type="email" class="form-input" placeholder="your@email.com" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Message</label>
+          <textarea class="form-textarea" placeholder="Tell me about your project..."></textarea>
+        </div>
+        <button type="submit" class="form-submit">Transmit Message ›</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- ▓▓▓ FOOTER ▓▓▓ -->
+  <footer>
+    <p>© 2026 <span>RICHI</span> — All systems online.</p>
+    <p>Built with <span>precision</span> &amp; caffeine.</p>
+  </footer>
+
+  <!-- ════════════════════════════════════════════
+       JAVASCRIPT — Minimal, purposeful, performant
+  ════════════════════════════════════════════ -->
+  <script>
+    // ── Custom Cursor ──────────────────────────────
+    // Why: Replaces default cursor with a sleek dot + ring.
+    // Uses requestAnimationFrame for smooth tracking.
+    const cursor = document.getElementById('cursor');
+    const ring = document.getElementById('cursor-ring');
+    let mx = 0, my = 0, rx = 0, ry = 0;
+    document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+    function animCursor() {
+      cursor.style.left = mx + 'px';
+      cursor.style.top  = my + 'px';
+      rx += (mx - rx) * 0.15;
+      ry += (my - ry) * 0.15;
+      ring.style.left = rx + 'px';
+      ring.style.top  = ry + 'px';
+      requestAnimationFrame(animCursor);
+    }
+    animCursor();
+    // Expand cursor on hover
+    document.querySelectorAll('a, button, .project-card, .tool-item').forEach(el => {
+      el.addEventListener('mouseenter', () => {
+        cursor.style.width = '20px';
+        cursor.style.height = '20px';
+        ring.style.width = '54px';
+        ring.style.height = '54px';
+      });
+      el.addEventListener('mouseleave', () => {
+        cursor.style.width = '12px';
+        cursor.style.height = '12px';
+        ring.style.width = '36px';
+        ring.style.height = '36px';
+      });
+    });
+
+    // ── Typewriter Effect ──────────────────────────
+    // Why: Cycles through developer roles dynamically,
+    // making the hero feel alive without a carousel.
+    const roles = [
+      'high-performance systems.',
+      'elegant web interfaces.',
+      'scalable APIs.',
+      'developer tools.',
+      'things that matter.'
+    ];
+    let ri = 0, ci = 0, deleting = false;
+    const tw = document.getElementById('typewriter');
+    function type() {
+      const word = roles[ri];
+      if (!deleting) {
+        tw.textContent = word.slice(0, ++ci);
+        if (ci === word.length) { deleting = true; setTimeout(type, 1800); return; }
+      } else {
+        tw.textContent = word.slice(0, --ci);
+        if (ci === 0) { deleting = false; ri = (ri + 1) % roles.length; }
+      }
+      setTimeout(type, deleting ? 40 : 70);
+    }
+    setTimeout(type, 1600);
+
+    // ── Skill Bar Scroll Animation ─────────────────
+    // Why: Bars only animate when visible — creates a
+    // "wow" moment as user scrolls into the skills section.
+    const fills = document.querySelectorAll('.skill-fill');
+    const obs = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) { e.target.classList.add('animated'); }
+      });
+    }, { threshold: 0.1 });
+    fills.forEach(f => obs.observe(f));
+
+    // ── Form Submit ────────────────────────────────
+    function handleSubmit(e) {
+      e.preventDefault();
+      const btn = e.target.querySelector('.form-submit');
+      btn.textContent = '✓ Message Sent';
+      btn.style.background = 'var(--accent2)';
+      setTimeout(() => {
+        btn.textContent = 'Transmit Message ›';
+        btn.style.background = 'var(--accent)';
+      }, 3000);
+    }
+  </script>
+</body>
+</html>

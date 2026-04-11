@@ -1,0 +1,933 @@
+@keyframes fadeSlideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-16px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(16px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes scaleIn {
+    from {
+        opacity: 0;
+        transform: scale(0.96);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: -200% center;
+    }
+
+    100% {
+        background-position: 200% center;
+    }
+}
+
+@keyframes borderPulse {
+
+    0%,
+    100% {
+        border-left-color: var(--accent);
+    }
+
+    50% {
+        border-left-color: transparent;
+    }
+}
+
+@keyframes accentLineGrow {
+    from {
+        max-width: 0;
+    }
+
+    to {
+        max-width: 80px;
+    }
+}
+
+@keyframes pillPop {
+    0% {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+
+    70% {
+        transform: scale(1.05);
+    }
+
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes iconBounce {
+
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+
+    50% {
+        transform: translateX(4px);
+    }
+}
+
+@keyframes handleWiggle {
+
+    0%,
+    100% {
+        transform: scaleX(1);
+    }
+
+    50% {
+        transform: scaleX(0.6);
+    }
+}
+
+@keyframes overlayReveal {
+    from {
+        opacity: 0;
+        backdrop-filter: blur(0px);
+    }
+
+    to {
+        opacity: 1;
+        backdrop-filter: blur(8px);
+    }
+}
+
+#sheetOverlay {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+#sheetOverlay.active {
+    animation: overlayReveal 0.35s ease forwards;
+}
+
+/* Modal overlay entrance */
+.modal-overlay.active {
+    animation: overlayReveal 0.35s ease forwards;
+}
+
+#bottomSheet {
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    border-bottom: none;
+    width: 100%;
+    max-width: 860px;
+    max-height: 90vh;
+    overflow-y: auto;
+    padding: 48px;
+    position: relative;
+    transform: translateY(40px);
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+#sheetOverlay.active #bottomSheet {
+    transform: translateY(0);
+}
+
+#sheetOverlay.active #sheetHandle {
+    animation: handleWiggle 0.6s ease 0.4s;
+}
+
+/* Sheet tag fades in first */
+#sheetOverlay.active .sheet-tag {
+    animation: fadeSlideUp 0.4s ease 0.15s both;
+}
+
+/* Sheet title follows */
+#sheetOverlay.active .sheet-title {
+    animation: fadeSlideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.25s both;
+}
+
+/* Sheet body last */
+#sheetOverlay.active .sheet-body {
+    animation: fadeSlideUp 0.5s ease 0.35s both;
+}
+
+#sheetHandle {
+    width: 40px;
+    height: 4px;
+    background: #333;
+    border-radius: 2px;
+    margin: 0 auto 28px;
+}
+
+.sheet-tag {
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 12px;
+}
+
+.sheet-title {
+    font-family: var(--font-display);
+    font-size: 48px;
+    color: var(--text);
+    line-height: 1;
+    margin-bottom: 28px;
+}
+
+.sheet-body {
+    font-size: 14px;
+    color: var(--text-muted);
+    line-height: 1.8;
+}
+
+.section-label {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    margin-bottom: 48px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.section-label span {
+    color: var(--text-dim);
+    font-size: 10px;
+}
+
+.section-label::after {
+    content: '';
+    flex: 1;
+    max-width: 80px;
+    height: 1px;
+    background: var(--border2);
+}
+
+.projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+    gap: 24px;
+}
+
+.projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+    gap: 24px;
+}
+
+.project-card {
+    background: rgba(15, 15, 15, 0.8);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    padding: 36px;
+    position: relative;
+    cursor: pointer;
+    transition: border-color 0.3s, box-shadow 0.3s, transform 0.3s;
+    backdrop-filter: blur(10px);
+    overflow: hidden;
+}
+
+/* DECISION: Glow effect on hover only.
+       Constant glow = visual noise.
+       Hover glow = delightful interaction. */
+.project-card:hover {
+    border-color: var(--accent);
+    box-shadow: 0 0 40px rgba(200, 255, 0, 0.08),
+        0 0 80px rgba(200, 255, 0, 0.04);
+    transform: translateY(-4px);
+}
+
+/* Subtle gradient overlay on card */
+.project-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, var(--accent), transparent);
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.project-card:hover::before {
+    opacity: 1;
+}
+
+.project-tag {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--accent);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+}
+
+.project-name {
+    font-family: var(--font-display);
+    font-size: 36px;
+    color: var(--text);
+    line-height: 1;
+    margin-bottom: 16px;
+    letter-spacing: 0.02em;
+}
+
+.project-desc {
+    font-size: 14px;
+    color: var(--text-muted);
+    font-family: var(--font-body);
+    line-height: 1.7;
+    margin-bottom: 28px;
+    font-weight: 300;
+}
+
+.project-tech {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 28px;
+}
+
+.tech-pill {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--text-muted);
+    border: 1px solid var(--border2);
+    padding: 4px 10px;
+    letter-spacing: 0.05em;
+}
+
+.project-links {
+    display: flex;
+    gap: 20px;
+}
+
+.project-link {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-muted);
+    text-decoration: none;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: color 0.2s;
+}
+
+.project-link:hover {
+    color: var(--accent);
+}
+
+.project-link::after {
+    content: '→';
+    transition: transform 0.2s;
+}
+
+.project-link:hover::after {
+    transform: translateX(4px);
+}
+
+.project-card {
+    cursor: pointer;
+}
+
+.project-card .view-details {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: color 0.2s;
+}
+
+.project-card:hover .view-details {
+    color: var(--accent);
+}
+
+.project-card .view-details::after {
+    content: '↗';
+}
+
+.modal {
+    background: #0f0f0f;
+    width: 100%;
+    max-width: 860px;
+    max-height: 90vh;
+    padding: 48px;
+
+    transform: translateY(40px);
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(8px);
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+.modal-overlay.active {
+    opacity: 1;
+    pointer-events: all;
+}
+
+
+
+.modal-overlay.active .modal {
+    transform: translateY(0);
+}
+
+.modal-close {
+    top: 16px;
+    right: 16px;
+    font-size: 10px;
+    padding: 6px 12px;
+}
+
+.modal-title {
+    font-size: clamp(40px, 12vw, 64px);
+}
+
+.modal-grid {
+    grid-template-columns: 1fr;
+    gap: 28px;
+}
+
+
+.modal-actions {
+    display: flex;
+    justify-content: start;
+    /* center horizontally */
+    align-items: center;
+    /* center vertically */
+
+    width: 100%;
+    /* IMPORTANT */
+    margin-top: 20px;
+}
+
+.modal-actions a {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    padding: 12px 24px;
+    background-color: var(--accent);
+    color: black;
+
+    text-align: center;
+}
+
+/* ============================================
+       RESPONSIVE — VERY SMALL (max 380px)
+       DECISION: Covers small Android phones
+       like Moto G series common in India.
+    ============================================ */
+@media (max-width: 380px) {
+    .skills-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .about-stats {
+        gap: 16px;
+    }
+
+    .stat-number {
+        font-size: 36px;
+    }
+}
+
+/* ============================================
+       HORIZONTAL DIVIDER
+    ============================================ */
+.divider {
+    width: 100%;
+    height: 1px;
+    background: var(--border);
+}
+
+/* ============================================
+       PROJECT MODAL
+       DECISION: Fixed overlay with blur backdrop.
+       Keeps user on the same page — no routing needed.
+       Blur on background maintains context so the
+       user never feels lost.
+
+       DECISION: Modal slides up from bottom.
+       More natural on both mobile and desktop than
+       a fade-in-center approach. Feels intentional.
+    ============================================ */
+
+
+
+
+/* DECISION: Scrollbar styling.
+       Dark scrollbar matches the design — browser
+       default scrollbar would look out of place. */
+.modal::-webkit-scrollbar {
+    width: 4px;
+}
+
+.modal::-webkit-scrollbar-track {
+    background: var(--surface);
+}
+
+.modal::-webkit-scrollbar-thumb {
+    background: var(--border2);
+}
+
+.modal-close {
+    position: absolute;
+    top: 24px;
+    right: 24px;
+    background: none;
+    border: 1px solid var(--border2);
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    padding: 8px 16px;
+    cursor: pointer;
+    transition: border-color 0.2s, color 0.2s;
+}
+
+.modal-close:hover {
+    border-color: var(--text-muted);
+    color: var(--text);
+}
+
+.modal-tag {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--accent);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+}
+
+.modal-title {
+    font-family: var(--font-display);
+    font-size: clamp(48px, 8vw, 88px);
+    line-height: 0.9;
+    color: var(--text);
+    margin-bottom: 32px;
+    letter-spacing: 0.02em;
+}
+
+/* DECISION: Two-column layout inside modal.
+       Left = story (wider). Right = quick facts.
+       Newspaper column feel — consistent with the
+       overall design language. */
+.modal-grid {
+    display: grid;
+    grid-template-columns: 1fr 280px;
+    gap: 48px;
+    margin-bottom: 40px;
+}
+
+.modal-story h3 {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--accent);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+}
+
+.modal-story p {
+    font-size: 14px;
+    color: var(--text-muted);
+    line-height: 1.8;
+    margin-bottom: 16px;
+    font-weight: 300;
+}
+
+.modal-story p strong {
+    color: var(--text);
+    font-weight: 500;
+}
+
+.modal-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+}
+
+.modal-sidebar-block h4 {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--accent);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+}
+
+.modal-tech-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    list-style: none;
+}
+
+.modal-tech-list li {
+    font-size: 13px;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-mono);
+    font-weight: 300;
+}
+
+.modal-tech-list li::before {
+    content: '';
+    width: 4px;
+    height: 4px;
+    background: var(--accent);
+    flex-shrink: 0;
+}
+
+.modal-highlight {
+    background: var(--surface2);
+    border-left: 3px solid var(--accent);
+    padding: 16px 20px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--text-muted);
+    line-height: 1.6;
+    margin-top: 24px;
+}
+
+.modal-highlight strong {
+    color: var(--accent);
+    display: block;
+    margin-bottom: 4px;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+}
+
+.modal-actions {
+    display: flex;
+    gap: 16px;
+    padding-top: 32px;
+    border-top: 1px solid var(--border);
+}
+
+.section-label {
+    animation: fadeSlideUp 0.5s ease both;
+}
+
+/* Animate the ::after line growing */
+.section-label::after {
+    animation: accentLineGrow 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.3s both;
+}
+
+/* ============================================
+   PROJECT CARD ANIMATIONS
+============================================ */
+
+/* Cards stagger in when grid is visible */
+.projects-grid .project-card {
+    animation: scaleIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* Stagger each card */
+.projects-grid .project-card:nth-child(1) {
+    animation-delay: 0.05s;
+}
+
+.projects-grid .project-card:nth-child(2) {
+    animation-delay: 0.12s;
+}
+
+.projects-grid .project-card:nth-child(3) {
+    animation-delay: 0.19s;
+}
+
+.projects-grid .project-card:nth-child(4) {
+    animation-delay: 0.26s;
+}
+
+.projects-grid .project-card:nth-child(5) {
+    animation-delay: 0.33s;
+}
+
+.projects-grid .project-card:nth-child(6) {
+    animation-delay: 0.40s;
+}
+
+/* Border pulse on new card entrance — runs once */
+.project-card {
+    animation: borderPulse 1.2s ease 0.6s 2;
+}
+
+/* Tag slides in from left on hover */
+.project-card:hover .project-tag {
+    animation: slideInLeft 0.25s ease both;
+}
+
+/* Project name subtle scale on hover */
+.project-card:hover .project-name {
+    transition: letter-spacing 0.3s ease;
+    letter-spacing: 0.04em;
+}
+
+/* Tech pills pop in on hover */
+.project-card:hover .tech-pill {
+    animation: pillPop 0.3s ease both;
+}
+
+.project-card:hover .tech-pill:nth-child(1) {
+    animation-delay: 0.00s;
+}
+
+.project-card:hover .tech-pill:nth-child(2) {
+    animation-delay: 0.05s;
+}
+
+.project-card:hover .tech-pill:nth-child(3) {
+    animation-delay: 0.10s;
+}
+
+.project-card:hover .tech-pill:nth-child(4) {
+    animation-delay: 0.15s;
+}
+
+.project-card:hover .tech-pill:nth-child(5) {
+    animation-delay: 0.20s;
+}
+
+/* View details arrow bounces on card hover */
+.project-card:hover .view-details::after {
+    display: inline-block;
+    animation: iconBounce 0.6s ease infinite;
+}
+
+/* Project link arrow animates continuously on link hover */
+.project-link:hover::after {
+    animation: iconBounce 0.5s ease infinite;
+}
+
+/* ============================================
+   MODAL ANIMATIONS
+============================================ */
+
+/* Modal slides up smoothly — already handled by
+   transform, but we layer content animations on top */
+
+/* Modal tag */
+.modal-overlay.active .modal-tag {
+    animation: fadeSlideUp 0.4s ease 0.2s both;
+}
+
+/* Modal title — big dramatic entrance */
+.modal-overlay.active .modal-title {
+    animation: fadeSlideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.3s both;
+}
+
+/* Modal grid — story and sidebar */
+.modal-overlay.active .modal-story {
+    animation: slideInLeft 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.4s both;
+}
+
+.modal-overlay.active .modal-sidebar {
+    animation: slideInRight 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.45s both;
+}
+
+/* Modal sidebar blocks stagger */
+.modal-overlay.active .modal-sidebar-block:nth-child(1) {
+    animation: fadeSlideUp 0.4s ease 0.5s both;
+}
+
+.modal-overlay.active .modal-sidebar-block:nth-child(2) {
+    animation: fadeSlideUp 0.4s ease 0.6s both;
+}
+
+.modal-overlay.active .modal-sidebar-block:nth-child(3) {
+    animation: fadeSlideUp 0.4s ease 0.7s both;
+}
+
+/* Tech list items stagger in */
+.modal-overlay.active .modal-tech-list li {
+    animation: slideInLeft 0.35s ease both;
+}
+
+.modal-overlay.active .modal-tech-list li:nth-child(1) {
+    animation-delay: 0.55s;
+}
+
+.modal-overlay.active .modal-tech-list li:nth-child(2) {
+    animation-delay: 0.62s;
+}
+
+.modal-overlay.active .modal-tech-list li:nth-child(3) {
+    animation-delay: 0.69s;
+}
+
+.modal-overlay.active .modal-tech-list li:nth-child(4) {
+    animation-delay: 0.76s;
+}
+
+.modal-overlay.active .modal-tech-list li:nth-child(5) {
+    animation-delay: 0.83s;
+}
+
+/* Tech list dot pulse on entrance */
+.modal-overlay.active .modal-tech-list li::before {
+    animation: scaleIn 0.3s ease both;
+}
+
+/* Modal highlight block */
+.modal-overlay.active .modal-highlight {
+    animation: fadeSlideUp 0.5s ease 0.65s both;
+}
+
+/* Modal actions slide up last */
+.modal-overlay.active .modal-actions {
+    animation: fadeSlideUp 0.4s ease 0.7s both;
+}
+
+/* Modal close button fades in */
+.modal-overlay.active .modal-close {
+    animation: fadeIn 0.3s ease 0.5s both;
+}
+
+/* Close button hover — subtle scale */
+.modal-close {
+    transition: border-color 0.2s, color 0.2s, transform 0.15s ease;
+}
+
+.modal-close:hover {
+    transform: scale(0.96);
+}
+
+/* Modal action button shimmer effect */
+.modal-actions a {
+    position: relative;
+    overflow: hidden;
+    transition: opacity 0.2s, transform 0.2s ease;
+}
+
+.modal-actions a::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(105deg,
+            transparent 40%,
+            rgba(255, 255, 255, 0.15) 50%,
+            transparent 60%);
+    background-size: 200% auto;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.modal-actions a:hover::after {
+    opacity: 1;
+    animation: shimmer 0.7s linear;
+}
+
+.modal-actions a:hover {
+    transform: translateY(-2px);
+}
+
+.modal-actions a:active {
+    transform: translateY(0px);
+}
+
+/* ============================================
+   DIVIDER ANIMATION
+============================================ */
+
+.divider {
+    animation: scaleIn 0.5s ease both;
+    transform-origin: left;
+}
+
+/* ============================================
+   REDUCED MOTION — ACCESSIBILITY
+   DECISION: Respect user OS preference.
+   Never force animations on users who
+   have opted out for medical reasons.
+============================================ */
+@media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
