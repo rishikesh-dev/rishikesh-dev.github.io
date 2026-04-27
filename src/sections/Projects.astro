@@ -11,6 +11,7 @@ type Project = {
     tag: string;
     playStoreUrl: string;
     githubUrl: string;
+    buyNow: string;
     story: string;
     highlight: string;
     decisions: string[];
@@ -34,6 +35,7 @@ const projects: Project[] = snap.docs.map((doc) => {
         tag: data.tag ?? "",
         playStoreUrl: data.playStoreUrl ?? "",
         githubUrl: data.githubUrl ?? "",
+        buyNow: data.buyNow ?? "",
         story: data.story ?? "",
         highlight: data.highlight ?? "",
         decisions: Array.isArray(data.decisions) ? data.decisions : [],
@@ -142,6 +144,11 @@ const projectMap = Object.fromEntries(projects.map((p) => [p.id, p]));
         if (p.githubUrl) {
             actions.push(
                 `<a href="${p.githubUrl}" target="_blank" class="btn-primary">GitHub</a>`,
+            );
+        }
+        if (p.buyNow) {
+            actions.push(
+                `<a href="${p.buyNow}" target="_blank" class="btn-primary">Get Now</a>`,
             );
         }
 
